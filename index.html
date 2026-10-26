@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>授業欠席・単位管理システム - ATTENDANCE MANAGEMENT (ver 1.2.1)</title>
+    <title>授業欠席・単位管理システム - ATTENDANCE MANAGEMENT (ver 1.2.2)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -77,7 +77,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="font-bold text-sm tracking-widest text-white uppercase">ATTENDANCE MANAGEMENT</h1>
-                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-500/30 font-mono">ver 1.2.1</span>
+                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-500/30 font-mono">ver 1.2.2</span>
                     </div>
                     <p class="text-[10px] text-slate-400 tracking-wider">授業欠席・単位管理システム (Cloud Sync)</p>
                 </div>
@@ -258,7 +258,7 @@
                     <select id="selectStatsAcademicYear" class="bg-noir-950 text-indigo-300 font-bold border border-white/10 rounded-xl px-3 py-1.5 text-xs focus:outline-none"></select>
                 </div>
                 <button id="btnOpenUndatedAbsenceModal" class="px-3.5 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center gap-1.5">
-                    <i class="fa-solid fa-plus text-xs"></i> 授業欠席の直接記録
+                    <i class="fa-solid fa-plus text-xs"></i> 授業遅刻・早退・全休の直接記録
                 </button>
             </div>
 
@@ -292,9 +292,7 @@
                         + 新しい期間の時間割を追加
                     </button>
                 </div>
-                <div class="flex items-center gap-2 pt-1 flex-wrap" id="timetablePeriodTabsContainer">
-                    <!-- 期間タブを動的生成 -->
-                </div>
+                <div class="flex items-center gap-2 pt-1 flex-wrap" id="timetablePeriodTabsContainer"></div>
             </div>
 
             <div class="flex justify-between items-start flex-wrap gap-2">
@@ -337,6 +335,9 @@
                 <button data-setting-target="set-sub-alerts" class="setting-nav-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-white/5 hover:bg-white/10 text-slate-400 border border-white/5 shrink-0 flex items-center gap-1.5">
                     <i class="fa-solid fa-triangle-exclamation"></i> 注意・警告設定
                 </button>
+                <button data-setting-target="set-sub-ranges" class="setting-nav-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-white/5 hover:bg-white/10 text-slate-400 border border-white/5 shrink-0 flex items-center gap-1.5">
+                    <i class="fa-solid fa-calendar-days"></i> 集計範囲設定
+                </button>
                 <button data-setting-target="set-sub-news" class="setting-nav-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-white/5 hover:bg-white/10 text-slate-400 border border-white/5 shrink-0 flex items-center gap-1.5">
                     <i class="fa-solid fa-bullhorn"></i> お知らせ
                 </button>
@@ -378,6 +379,35 @@
                 </div>
             </div>
 
+            <div id="set-sub-ranges" class="setting-sub-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-5 space-y-4">
+                    <div class="border-b border-white/5 pb-3">
+                        <h3 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days text-indigo-400"></i> 集計・カウント期間のカスタム詳細調整
+                        </h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5">カレンダー上の集計や、集計・管理画面における科目ごとの欠席回数の集計対象期間を、年度ごとに細かくカスタマイズできます。</p>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-medium text-slate-400 mb-1">設定対象の年度を選択</label>
+                            <select id="selectRangeConfigYear" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-medium text-slate-400 mb-1">集計開始日</label>
+                                <input type="date" id="inputRangeStart" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block font-medium text-slate-400 mb-1">集計終了日</label>
+                                <input type="date" id="inputRangeEnd" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none">
+                            </div>
+                        </div>
+                        <button id="btnSaveCustomRange" class="w-full py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition shadow">この期間設定を保存する</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="set-sub-news" class="setting-sub-content hidden space-y-4">
                 <div class="glass-panel rounded-2xl p-5 space-y-4">
                     <div class="border-b border-white/5 pb-3">
@@ -385,9 +415,7 @@
                             <i class="fa-solid fa-bullhorn text-indigo-400"></i> お知らせ・アップデート情報
                         </h3>
                     </div>
-                    <div id="newsContainer" class="space-y-3 text-xs">
-                        <!-- 蓄積型お知らせリスト -->
-                    </div>
+                    <div id="newsContainer" class="space-y-3 text-xs"></div>
                 </div>
             </div>
 
@@ -448,7 +476,7 @@
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 border border-white/10 max-h-[85vh] flex flex-col">
             <div class="flex justify-between items-center border-b border-white/5 pb-3 shrink-0">
                 <h3 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-question"></i> アプリの使い方ガイド (ver 1.2.1)
+                    <i class="fa-solid fa-circle-question"></i> アプリの使い方ガイド (ver 1.2.2)
                 </h3>
                 <button id="btnCloseGuide" class="text-slate-400 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-sm"></i>
@@ -458,19 +486,19 @@
             <div class="space-y-4 overflow-y-auto no-scrollbar text-xs text-slate-300 pr-1">
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
                     <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-cloud"></i> 1. クラウド同期とアカウント管理
+                        <i class="fa-solid fa-calendar-days"></i> 1. 日付未指定と年度の選択
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        アカウントごとにFirestoreでデータが完全独立してクラウド保存されるため、別端末からログインしても正しいデータが自動同期されます。
+                        直接記録で日付を空欄にした場合、選択した「集計対象の年度」にデータが紐づいて自動集計されます。
                     </p>
                 </div>
 
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
                     <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-calendar-days"></i> 2. 時間割の期間設定
+                        <i class="fa-solid fa-sliders"></i> 2. カウント対象期間のカスタム調整
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        「時間割」タブの上部で期間（〜7/31など）を追加・選択して、学期ごとの時間割を切り替えて管理できます。
+                        「設定」タブの「集計範囲設定」から、各年度の正確な集計開始日と終了日を自由にカスタマイズ可能です。
                     </p>
                 </div>
             </div>
@@ -648,7 +676,7 @@
         </div>
     </div>
 
-    <!-- Modal: Add Custom Absence (Flexible Date & Type without 欠席) -->
+    <!-- Modal: Add Custom Absence (with date optional & academic year fallback) -->
     <div id="addAbsenceModal" class="fixed inset-0 bg-noir-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 border border-white/10">
             <div class="border-b border-white/5 pb-3">
@@ -660,8 +688,13 @@
 
             <div class="space-y-3 text-xs">
                 <div>
-                    <label class="block font-medium text-slate-400 mb-1.5">日付指定 (未入力時は本日)</label>
+                    <label class="block font-medium text-slate-400 mb-1.5">日付指定 (未入力時は年度の初日を適用)</label>
                     <input type="date" id="inputAddAbsenceDate" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
+                </div>
+
+                <div id="absenceYearSelectGroup" class="hidden">
+                    <label class="block font-medium text-slate-400 mb-1.5">適用する対象年度を選択</label>
+                    <select id="selectAddAbsenceFallbackYear" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none"></select>
                 </div>
 
                 <div>
@@ -763,7 +796,7 @@
         </div>
     </nav>
 
-    <!-- Firebase SDKs & App Logic (ver 1.2.1 Cloud Sync) -->
+    <!-- Firebase SDKs & App Logic (ver 1.2.2 Cloud Sync) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -804,6 +837,7 @@
         let subjectWarnMargin = {};
         let dayNotes = {};
         let daySubjectOverrides = {};
+        let customYearRanges = {}; // { '2026': { start: '2026-04-01', end: '2027-03-31' } }
         let showWeekend = false;
         let maxTimetablePeriods = 7;
 
@@ -819,21 +853,19 @@
 
         const NEWS_LOGS = [
             {
+                version: 'ver 1.2.2',
+                date: '2026.10.26',
+                contents: [
+                    '日付未指定での直接記録時に、どの年度としてカウントするかを選択できるようになりました。',
+                    '設定タブに「集計範囲設定」を追加し、カレンダーや集計画面の日付範囲（開始日・終了日）を年度ごとに細かくカスタム調整できるようになりました。'
+                ]
+            },
+            {
                 version: 'ver 1.2.1',
                 date: '2026.10.26',
                 contents: [
                     '時間割を期間指定（〜7/31など）で複数管理できるようになりました。',
-                    '集計・管理画面でも年度（4/1〜翌3/31）を選択して確認できるように改善しました。',
-                    '直接記録モーダルから「欠席」を整理し、区分に「全休」選択時は自動で科目・時限が省略されるよう最適化しました。',
-                    'アカウントごとのFirestoreデータ同期構造を完全に強化しました。'
-                ]
-            },
-            {
-                version: 'ver 1.2',
-                date: '2026.10.26',
-                contents: [
-                    '時間割の時限追加および時限削除に対応しました。',
-                    'Cloud Firestore によるマルチデバイス自動リアルタイム同期機能を搭載しました。'
+                    '集計・管理画面でも年度（4/1〜翌3/31）を選択して確認できるように改善しました。'
                 ]
             }
         ];
@@ -847,6 +879,19 @@
             const y = dateObj.getFullYear();
             const m = dateObj.getMonth() + 1;
             return m < 4 ? y - 1 : y;
+        }
+
+        function getYearRange(year) {
+            if (customYearRanges[year]) {
+                return {
+                    start: new Date(customYearRanges[year].start),
+                    end: new Date(customYearRanges[year].end + 'T23:59:59')
+                };
+            }
+            return {
+                start: new Date(year, 3, 1),
+                end: new Date(year + 1, 2, 31, 23, 59, 59)
+            };
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -993,6 +1038,7 @@
                     subjectWarnMargin = data.subjectWarnMargin || {};
                     dayNotes = data.dayNotes || {};
                     daySubjectOverrides = data.daySubjectOverrides || {};
+                    customYearRanges = data.customYearRanges || {};
                     showWeekend = data.showWeekend !== undefined ? data.showWeekend : false;
                     maxTimetablePeriods = data.maxTimetablePeriods || 7;
                 } else {
@@ -1016,6 +1062,7 @@
                     subjectWarnMargin,
                     dayNotes,
                     daySubjectOverrides,
+                    customYearRanges,
                     showWeekend,
                     maxTimetablePeriods,
                     updatedAt: new Date().toISOString()
@@ -1036,6 +1083,7 @@
             initSettingSubTabs();
             initDateSelector();
             initAcademicYearSelectors();
+            initRangeSettings();
             
             renderTodayTab();
             renderCalendarTab();
@@ -1084,7 +1132,7 @@
                     if (targetTabId === 'tab-calendar') { initAcademicYearSelectors(); renderCalendarTab(); }
                     if (targetTabId === 'tab-stats') { initAcademicYearSelectors(); renderStatsTab(); }
                     if (targetTabId === 'tab-timetable') { renderTimetableTabs(); renderTimetableGrid(); }
-                    if (targetTabId === 'tab-settings') renderSettingsTab();
+                    if (targetTabId === 'tab-settings') { initRangeSettings(); renderSettingsTab(); }
                 });
             });
         }
@@ -1145,7 +1193,6 @@
             const currentYear = new Date().getFullYear();
             const years = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
             
-            // カレンダー用
             const selectCal = document.getElementById('selectAcademicYear');
             if (selectCal) {
                 selectCal.innerHTML = '';
@@ -1162,7 +1209,6 @@
                 };
             }
 
-            // 集計用
             const selectStats = document.getElementById('selectStatsAcademicYear');
             if (selectStats) {
                 selectStats.innerHTML = '';
@@ -1178,6 +1224,30 @@
                     renderStatsTab();
                 };
             }
+        }
+
+        function initRangeSettings() {
+            const currentYear = new Date().getFullYear();
+            const years = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
+            const selectYear = document.getElementById('selectRangeConfigYear');
+            if (!selectYear) return;
+
+            selectYear.innerHTML = '';
+            years.forEach(y => {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = `${y}年度`;
+                selectYear.appendChild(opt);
+            });
+
+            const updateInputs = (yr) => {
+                const range = getYearRange(parseInt(yr));
+                document.getElementById('inputRangeStart').value = range.start.toISOString().split('T')[0];
+                document.getElementById('inputRangeEnd').value = range.end.toISOString().split('T')[0];
+            };
+
+            updateInputs(selectYear.value);
+            selectYear.onchange = (e) => updateInputs(e.target.value);
         }
 
         function getActiveDayKey(dateStr) {
@@ -1355,12 +1425,11 @@
             let totalLate = 0;
             let totalEarly = 0;
 
-            const startYearDate = new Date(currentAcademicYear, 3, 1);
-            const endYearDate = new Date(currentAcademicYear + 1, 2, 31, 23, 59, 59);
+            const range = getYearRange(currentAcademicYear);
 
             Object.keys(records).forEach(dateStr => {
                 const d = new Date(dateStr);
-                if (d >= startYearDate && d <= endYearDate) {
+                if (d >= range.start && d <= range.end) {
                     const rec = records[dateStr];
                     if (rec && rec.absences) {
                         rec.absences.forEach(abs => {
@@ -1518,12 +1587,11 @@
                 subjectCounts[s] = { count: 0 };
             });
 
-            const startYearDate = new Date(statsAcademicYear, 3, 1);
-            const endYearDate = new Date(statsAcademicYear + 1, 2, 31, 23, 59, 59);
+            const range = getYearRange(statsAcademicYear);
 
             Object.keys(records).forEach(dateStr => {
                 const d = new Date(dateStr);
-                if (d >= startYearDate && d <= endYearDate) {
+                if (d >= range.start && d <= range.end) {
                     const rec = records[dateStr];
                     if (rec && rec.absences) {
                         rec.absences.forEach(abs => {
@@ -1985,7 +2053,6 @@
                 }
             });
 
-            // 時間割の期間追加モーダル
             const periodModal = document.getElementById('timetablePeriodModal');
             document.getElementById('btnAddTimetablePeriod').addEventListener('click', () => {
                 document.getElementById('inputPeriodTitle').value = '';
@@ -2020,6 +2087,24 @@
                 renderTimetableTabs();
                 renderTimetableGrid();
                 showToast('新しい時間割期間を追加しました', 'emerald');
+            });
+
+            // 集計範囲カスタム保存
+            document.getElementById('btnSaveCustomRange').addEventListener('click', () => {
+                const yr = document.getElementById('selectRangeConfigYear').value;
+                const start = document.getElementById('inputRangeStart').value;
+                const end = document.getElementById('inputRangeEnd').value;
+
+                if (!start || !end) {
+                    alert('開始日と終了日を入力してください。');
+                    return;
+                }
+
+                customYearRanges[yr] = { start, end };
+                saveUserDataToFirestore();
+                renderCalendarTab();
+                renderStatsTab();
+                showToast(`${yr}年度の集計範囲を保存しました`, 'emerald');
             });
 
             document.getElementById('selectOverrideMasterSubject').addEventListener('change', (e) => {
@@ -2288,9 +2373,34 @@
             });
 
             const addAbsenceModal = document.getElementById('addAbsenceModal');
-            
+            const dateInputEl = document.getElementById('inputAddAbsenceDate');
+            const yearSelectGroup = document.getElementById('absenceYearSelectGroup');
+            const fallbackYearSelect = document.getElementById('selectAddAbsenceFallbackYear');
+
+            function updateDateOrYearFieldVisibility() {
+                if (!dateInputEl.value) {
+                    yearSelectGroup.classList.remove('hidden');
+                    // 年度セレクト初期化
+                    const currentYear = new Date().getFullYear();
+                    const years = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
+                    fallbackYearSelect.innerHTML = '';
+                    years.forEach(y => {
+                        const opt = document.createElement('option');
+                        opt.value = y;
+                        opt.textContent = `${y}年度 (4/1)`;
+                        if (y === currentAcademicYear) opt.selected = true;
+                        fallbackYearSelect.appendChild(opt);
+                    });
+                } else {
+                    yearSelectGroup.classList.add('hidden');
+                }
+            }
+
+            dateInputEl.addEventListener('change', updateDateOrYearFieldVisibility);
+
             document.getElementById('btnOpenAddAbsenceModal').addEventListener('click', () => {
-                document.getElementById('inputAddAbsenceDate').value = selectedCalendarDate || new Date().toISOString().split('T')[0];
+                dateInputEl.value = selectedCalendarDate || new Date().toISOString().split('T')[0];
+                updateDateOrYearFieldVisibility();
                 
                 const select = document.getElementById('addAbsenceSubjectSelect');
                 populateSubjectDropdown(select);
@@ -2302,7 +2412,8 @@
             });
 
             document.getElementById('btnOpenUndatedAbsenceModal').addEventListener('click', () => {
-                document.getElementById('inputAddAbsenceDate').value = new Date().toISOString().split('T')[0];
+                dateInputEl.value = ''; // 未指定
+                updateDateOrYearFieldVisibility();
                 
                 const select = document.getElementById('addAbsenceSubjectSelect');
                 populateSubjectDropdown(select);
@@ -2336,7 +2447,12 @@
             });
 
             document.getElementById('btnSaveAddAbsence').addEventListener('click', () => {
-                const targetDate = document.getElementById('inputAddAbsenceDate').value || new Date().toISOString().split('T')[0];
+                let targetDate = document.getElementById('inputAddAbsenceDate').value;
+                if (!targetDate) {
+                    const chosenYr = document.getElementById('selectAddAbsenceFallbackYear').value;
+                    targetDate = `${chosenYr}-04-01`; // 未指定時は選択年度の4/1に保存
+                }
+
                 const noteType = document.getElementById('addAbsenceTypeSelect').value;
 
                 if (!records[targetDate]) {
