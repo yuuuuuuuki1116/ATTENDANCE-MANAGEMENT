@@ -83,7 +83,6 @@ body {
   font-weight: 500;
 }
 
-/* 入力欄 & ブラウザ標準の目のアイコンを非表示にして重複を解消 */
 input[type="email"],
 input[type="password"],
 input[type="text"] {
@@ -99,7 +98,6 @@ input[type="text"] {
   color: #333333;
 }
 
-/* Edge / Chrome などのブラウザ非標準アイコントグルを非表示化 */
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
@@ -293,6 +291,75 @@ input[type="text"]:focus {
   text-align: center;
   width: 100%;
   max-width: 380px;
+}
+
+/* お知らせ表示用カード・リスト */
+.notices-container {
+  background: #ffffff;
+  padding: 32px 24px;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  width: 100%;
+  max-width: 500px;
+}
+
+.notice-item {
+  border: 1px solid #e6f0fa;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: #ffffff;
+}
+
+.notice-header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  background-color: #f8fbfe;
+  transition: background-color 0.2s;
+  user-select: none;
+}
+
+.notice-header:hover {
+  background-color: #e6f0fa;
+}
+
+.notice-tag {
+  background-color: #0066cc;
+  color: #ffffff;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.notice-title {
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.notice-arrow {
+  font-size: 0.75rem;
+  color: #0066cc;
+  transition: transform 0.2s ease;
+}
+
+.notice-item.open .notice-arrow {
+  transform: rotate(180deg);
+}
+
+.notice-body {
+  padding: 16px;
+  border-top: 1px solid #e6f0fa;
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.6;
+  background-color: #ffffff;
 }
 
 /* 設定画面レイアウト */

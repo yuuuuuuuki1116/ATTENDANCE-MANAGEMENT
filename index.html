@@ -185,13 +185,23 @@
 
     <!-- お知らせ画面 -->
     <main id="notices-view" class="main-content hidden">
-      <div class="center-card">
-        <h2 class="title-blue">お知らせ</h2>
-        <p class="sub-text" style="margin-top: 12px; margin-bottom: 0;">ただいまお知らせはありません。</p>
+      <div class="notices-container">
+        <h2 class="title-blue" style="margin-bottom: 20px;">お知らせ</h2>
+        
+        <div class="notice-item" id="notice-ver111">
+          <div class="notice-header">
+            <span class="notice-tag">リリース</span>
+            <span class="notice-title">ver1.1.1</span>
+            <span class="notice-arrow">▼</span>
+          </div>
+          <div class="notice-body hidden">
+            <p>この度、アプリの動作確認を目的とした仮リリースを実施します。</p>
+          </div>
+        </div>
       </div>
     </main>
 
-    <!-- 設定画面（インデックス項目ごとに表示切り替え） -->
+    <!-- 設定画面 -->
     <main id="settings-view" class="main-content hidden">
       <div class="settings-container">
         <div class="settings-header">

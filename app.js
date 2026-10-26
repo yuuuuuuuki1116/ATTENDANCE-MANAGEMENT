@@ -150,6 +150,17 @@ tabTimetable.addEventListener('click', () => showMainView('timetable'));
 noticesBtn.addEventListener('click', () => showMainView('notices'));
 settingsBtn.addEventListener('click', () => showMainView('settings'));
 
+// お知らせのアコーディオン開閉
+const noticeVer111 = document.getElementById('notice-ver111');
+if (noticeVer111) {
+  const header = noticeVer111.querySelector('.notice-header');
+  const body = noticeVer111.querySelector('.notice-body');
+  header.addEventListener('click', () => {
+    noticeVer111.classList.toggle('open');
+    body.classList.toggle('hidden');
+  });
+}
+
 const handleLogout = async () => {
   try {
     await signOut(auth);
