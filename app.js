@@ -40,6 +40,7 @@ const statusView = document.getElementById('status-view');
 const calendarView = document.getElementById('calendar-view');
 const timetableView = document.getElementById('timetable-view');
 const noticesView = document.getElementById('notices-view');
+const noticeDetailView = document.getElementById('notice-detail-view');
 const settingsView = document.getElementById('settings-view');
 
 const loginErrorMsg = document.getElementById('login-error-msg');
@@ -54,6 +55,7 @@ const logoutBtn = document.getElementById('logout-btn');
 const headerLogoutBtn = document.getElementById('header-logout-btn');
 
 // ヘッダー・タスクバーのボタン
+const appTitleBtn = document.getElementById('app-title-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const noticesBtn = document.getElementById('notices-btn');
 
@@ -105,6 +107,7 @@ function showMainView(viewName) {
   calendarView.classList.add('hidden');
   timetableView.classList.add('hidden');
   noticesView.classList.add('hidden');
+  noticeDetailView.classList.add('hidden');
   settingsView.classList.add('hidden');
 
   settingsBtn.classList.remove('active');
@@ -134,6 +137,9 @@ function showMainView(viewName) {
   } else if (viewName === 'notices') {
     noticesView.classList.remove('hidden');
     noticesBtn.classList.add('active');
+  } else if (viewName === 'noticeDetail') {
+    noticeDetailView.classList.remove('hidden');
+    noticesBtn.classList.add('active');
   } else if (viewName === 'settings') {
     settingsView.classList.remove('hidden');
     settingsBtn.classList.add('active');
@@ -147,17 +153,25 @@ tabStatus.addEventListener('click', () => showMainView('status'));
 tabCalendar.addEventListener('click', () => showMainView('calendar'));
 tabTimetable.addEventListener('click', () => showMainView('timetable'));
 
+// ヘッダータイトルのタップでホーム画面へ
+appTitleBtn.addEventListener('click', () => showMainView('home'));
+
 noticesBtn.addEventListener('click', () => showMainView('notices'));
 settingsBtn.addEventListener('click', () => showMainView('settings'));
 
-// お知らせのアコーディオン開閉
-const noticeVer111 = document.getElementById('notice-ver111');
-if (noticeVer111) {
-  const header = noticeVer111.querySelector('.notice-header');
-  const body = noticeVer111.querySelector('.notice-body');
-  header.addEventListener('click', () => {
-    noticeVer111.classList.toggle('open');
-    body.classList.toggle('hidden');
+// お知らせver1.1.1をタップして別画面表示
+const noticeItemVer111 = document.getElementById('notice-item-ver111');
+if (noticeItemVer111) {
+  noticeItemVer111.addEventListener('click', () => {
+    showMainView('noticeDetail');
+  });
+}
+
+// お知らせ詳細から一覧画面へ戻るボタン
+const backToNoticesBtn = document.getElementById('back-to-notices-btn');
+if (backToNoticesBtn) {
+  backToNoticesBtn.addEventListener('click', () => {
+    showMainView('notices');
   });
 }
 

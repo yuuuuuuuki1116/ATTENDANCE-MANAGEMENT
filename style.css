@@ -152,6 +152,20 @@ input[type="text"]:focus {
   text-decoration: underline;
 }
 
+.blue-link-btn {
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.blue-link-btn:hover {
+  text-decoration: underline;
+}
+
 .forgot-link {
   text-align: right;
   margin-bottom: 20px;
@@ -225,34 +239,47 @@ input[type="text"]:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 16px;
   z-index: 100;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .version-text {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #6688aa;
   font-weight: 500;
 }
 
+/* ヘッダータイトルのタップ対応 */
 .main-header-title {
   font-weight: bold;
   color: #004080;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   letter-spacing: 0.3px;
+}
+
+.clickable-title {
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.clickable-title:hover {
+  background-color: rgba(0, 102, 204, 0.1);
 }
 
 .main-header-icons {
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 
+/* アイコンボタン（余白・見切れを防止） */
 .icon-btn {
   background: none;
   border: none;
@@ -264,6 +291,12 @@ input[type="text"]:focus {
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s;
+}
+
+/* SVGアイコンが枠からはみ出して欠けるのを防ぐ */
+.icon-btn svg {
+  display: block;
+  overflow: visible;
 }
 
 .icon-btn:hover,
@@ -278,7 +311,7 @@ input[type="text"]:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
   width: 100%;
 }
 
@@ -293,10 +326,10 @@ input[type="text"]:focus {
   max-width: 380px;
 }
 
-/* お知らせ表示用カード・リスト */
+/* お知らせ一覧・詳細レスポンシブスタイル */
 .notices-container {
   background: #ffffff;
-  padding: 32px 24px;
+  padding: 24px 20px;
   border-radius: 12px;
   border: 1px solid #e5e5e5;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -344,22 +377,30 @@ input[type="text"]:focus {
 }
 
 .notice-arrow {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #0066cc;
-  transition: transform 0.2s ease;
+  font-weight: bold;
 }
 
-.notice-item.open .notice-arrow {
-  transform: rotate(180deg);
+.notice-detail-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e6f0fa;
 }
 
-.notice-body {
-  padding: 16px;
-  border-top: 1px solid #e6f0fa;
-  font-size: 0.9rem;
+.notice-detail-content {
+  padding: 8px 0;
+}
+
+.notice-detail-body {
+  margin-top: 16px;
+  font-size: 0.95rem;
   color: #444;
   line-height: 1.6;
-  background-color: #ffffff;
+  background-color: #f8fbfe;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e6f0fa;
 }
 
 /* 設定画面レイアウト */
@@ -436,16 +477,27 @@ input[type="text"]:focus {
   text-align: center;
 }
 
+/* スマホ表示最適化 */
 @media (max-width: 600px) {
+  .main-header-title {
+    font-size: 0.78rem;
+  }
+  .version-text {
+    font-size: 0.68rem;
+  }
+  .settings-container {
+    padding: 16px;
+  }
   .settings-body {
     flex-direction: column;
+    gap: 16px;
   }
   .settings-sidebar {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid #e6f0fa;
     padding-right: 0;
-    padding-bottom: 16px;
+    padding-bottom: 12px;
   }
   .settings-menu {
     flex-direction: row;
