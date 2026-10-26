@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>授業欠席・単位管理システム - ATTENDANCE MANAGEMENT (ver 1.2)</title>
+    <title>授業欠席・単位管理システム - ATTENDANCE MANAGEMENT (ver 1.2.1)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -77,7 +77,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="font-bold text-sm tracking-widest text-white uppercase">ATTENDANCE MANAGEMENT</h1>
-                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-500/30 font-mono">ver 1.2</span>
+                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-500/30 font-mono">ver 1.2.1</span>
                     </div>
                     <p class="text-[10px] text-slate-400 tracking-wider">授業欠席・単位管理システム (Cloud Sync)</p>
                 </div>
@@ -252,10 +252,10 @@
 
         <!-- Tab 3: 集計・管理 -->
         <section id="tab-stats" class="tab-content hidden space-y-5">
-            <div class="flex justify-between items-center flex-wrap gap-2">
-                <div>
-                    <h2 class="text-base font-bold text-white tracking-wide">教科別 欠席状況</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">科目名クリックで詳細確認・日付未指定の欠席追加も可能です</p>
+            <div class="glass-panel p-4 rounded-2xl flex flex-wrap justify-between items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400 font-medium">対象年度:</span>
+                    <select id="selectStatsAcademicYear" class="bg-noir-950 text-indigo-300 font-bold border border-white/10 rounded-xl px-3 py-1.5 text-xs focus:outline-none"></select>
                 </div>
                 <button id="btnOpenUndatedAbsenceModal" class="px-3.5 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center gap-1.5">
                     <i class="fa-solid fa-plus text-xs"></i> 授業欠席の直接記録
@@ -282,9 +282,24 @@
 
         <!-- Tab 4: 時間割設定 -->
         <section id="tab-timetable" class="tab-content hidden space-y-5">
+            <div class="glass-panel p-4 rounded-2xl space-y-3">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <div>
+                        <h2 class="text-base font-bold text-white tracking-wide">時間割の有効期間設定</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">指定した期間の間、この時間割が適用されます</p>
+                    </div>
+                    <button id="btnAddTimetablePeriod" class="text-xs px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition shadow">
+                        + 新しい期間の時間割を追加
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 pt-1 flex-wrap" id="timetablePeriodTabsContainer">
+                    <!-- 期間タブを動的生成 -->
+                </div>
+            </div>
+
             <div class="flex justify-between items-start flex-wrap gap-2">
                 <div>
-                    <h2 class="text-base font-bold text-white tracking-wide">時間割設定</h2>
+                    <h2 class="text-base font-bold text-white tracking-wide" id="currentTimetablePeriodTitle">時間割設定</h2>
                     <p class="text-xs text-slate-400 mt-0.5">コマを選択して登録科目から教科を選択し決定してください</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -370,19 +385,8 @@
                             <i class="fa-solid fa-bullhorn text-indigo-400"></i> お知らせ・アップデート情報
                         </h3>
                     </div>
-                    <div class="space-y-3 text-xs">
-                        <div class="p-3.5 bg-noir-950 rounded-xl border border-white/10 space-y-1.5">
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-indigo-300">🎉 バージョン 1.2 アップデート情報</span>
-                                <span class="text-[10px] text-slate-500 font-mono">2026.10.26</span>
-                            </div>
-                            <ul class="text-slate-400 leading-relaxed space-y-1 list-disc list-inside pt-1">
-                                <li>時間割の「時限追加」および「時限削除」に対応しました。</li>
-                                <li>授業欠席の直接記録で、日付選択を任意（未入力時は本日自動設定）に変更しました。</li>
-                                <li>区分で「全休」選択時に科目・時限の入力項目を自動非表示に改善しました。</li>
-                                <li>Cloud Firestore によるマルチデバイス自動リアルタイム同期機能を搭載しました。</li>
-                            </ul>
-                        </div>
+                    <div id="newsContainer" class="space-y-3 text-xs">
+                        <!-- 蓄積型お知らせリスト -->
                     </div>
                 </div>
             </div>
@@ -444,7 +448,7 @@
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 border border-white/10 max-h-[85vh] flex flex-col">
             <div class="flex justify-between items-center border-b border-white/5 pb-3 shrink-0">
                 <h3 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-question"></i> アプリの使い方ガイド (ver 1.2)
+                    <i class="fa-solid fa-circle-question"></i> アプリの使い方ガイド (ver 1.2.1)
                 </h3>
                 <button id="btnCloseGuide" class="text-slate-400 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-sm"></i>
@@ -454,28 +458,19 @@
             <div class="space-y-4 overflow-y-auto no-scrollbar text-xs text-slate-300 pr-1">
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
                     <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-cloud"></i> 1. クラウド同期と認証
+                        <i class="fa-solid fa-cloud"></i> 1. クラウド同期とアカウント管理
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        メール認証完了後のアカウントデータはクラウド（Firestore）に自動保存されるため、別端末からログインしても同じ時間割や記録を閲覧できます。
+                        アカウントごとにFirestoreでデータが完全独立してクラウド保存されるため、別端末からログインしても正しいデータが自動同期されます。
                     </p>
                 </div>
 
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
                     <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-table-cells"></i> 2. 時間割の時限追加・削除
+                        <i class="fa-solid fa-calendar-days"></i> 2. 時間割の期間設定
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        「時間割」タブの上部にある「+ 時限追加」「- 時限削除」ボタンで、時限数を自由に変更できます。
-                    </p>
-                </div>
-
-                <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
-                    <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-calendar-plus"></i> 3. 柔軟な直接記録
-                    </h4>
-                    <p class="text-slate-400 leading-relaxed">
-                        集計・カレンダー画面からの直接記録では、日付未入力時は本日が自動適用され、区分で「全休」を選ぶと科目・時限選択が省略されます。
+                        「時間割」タブの上部で期間（〜7/31など）を追加・選択して、学期ごとの時間割を切り替えて管理できます。
                     </p>
                 </div>
             </div>
@@ -653,7 +648,7 @@
         </div>
     </div>
 
-    <!-- Modal: Add Custom Absence (Flexible Date & Type) -->
+    <!-- Modal: Add Custom Absence (Flexible Date & Type without 欠席) -->
     <div id="addAbsenceModal" class="fixed inset-0 bg-noir-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 border border-white/10">
             <div class="border-b border-white/5 pb-3">
@@ -672,14 +667,12 @@
                 <div>
                     <label class="block font-medium text-slate-400 mb-1.5">区分 / 理由</label>
                     <select id="addAbsenceTypeSelect" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
-                        <option value="欠席">欠席</option>
                         <option value="遅刻">遅刻</option>
                         <option value="早退">早退</option>
                         <option value="全休">全休 (終日)</option>
                     </select>
                 </div>
 
-                <!-- 全休選択時は非表示にするラッパー -->
                 <div id="subjectPeriodGroup" class="space-y-3">
                     <div>
                         <label class="block font-medium text-slate-400 mb-1.5">教科の指定 <span class="text-rose-400">*必須</span></label>
@@ -703,6 +696,37 @@
             <div class="flex gap-2.5 pt-2">
                 <button id="btnCancelAddAbsence" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition border border-white/5">キャンセル</button>
                 <button id="btnSaveAddAbsence" class="flex-1 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold transition shadow-lg shadow-indigo-500/20">決定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Timetable Period Range -->
+    <div id="timetablePeriodModal" class="fixed inset-0 bg-noir-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 border border-white/10">
+            <div class="border-b border-white/5 pb-3">
+                <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-days text-indigo-400"></i> 時間割の適用期間を追加
+                </h3>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-medium text-slate-400 mb-1.5">期間タイトル (例: 1学期, 前期)</label>
+                    <input type="text" id="inputPeriodTitle" placeholder="例: 1学期" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-slate-400 mb-1.5">開始日</label>
+                        <input type="date" id="inputPeriodStart" class="w-full bg-noir-950 px-3 py-2 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-400 mb-1.5">終了日 (~7/31など)</label>
+                        <input type="date" id="inputPeriodEnd" class="w-full bg-noir-950 px-3 py-2 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2.5 pt-2">
+                <button id="btnCancelTimetablePeriod" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition border border-white/5">キャンセル</button>
+                <button id="btnSaveTimetablePeriod" class="flex-1 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold transition">追加する</button>
             </div>
         </div>
     </div>
@@ -739,7 +763,7 @@
         </div>
     </nav>
 
-    <!-- Firebase SDKs & App Logic (Cloud Firestore Synchronized) -->
+    <!-- Firebase SDKs & App Logic (ver 1.2.1 Cloud Sync) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -771,7 +795,10 @@
 
         let currentUserId = null;
         let masterSubjects = [];
-        let timetable = JSON.parse(JSON.stringify(EMPTY_TIMETABLE));
+        let timetablePeriods = [
+            { id: 'default', title: '標準 (通年)', startDate: '2026-04-01', endDate: '2027-03-31', timetable: JSON.parse(JSON.stringify(EMPTY_TIMETABLE)) }
+        ];
+        let activeTimetableId = 'default';
         let records = {};
         let subjectLimits = {};
         let subjectWarnMargin = {};
@@ -784,10 +811,32 @@
         let currentCalendarDate = new Date();
         let selectedCalendarDate = currentTargetDate;
         let currentAcademicYear = getAcademicYear(new Date());
+        let statsAcademicYear = getAcademicYear(new Date());
 
         let activeOverridePeriod = null;
         let confirmCallback = null;
         let authMode = 'login';
+
+        const NEWS_LOGS = [
+            {
+                version: 'ver 1.2.1',
+                date: '2026.10.26',
+                contents: [
+                    '時間割を期間指定（〜7/31など）で複数管理できるようになりました。',
+                    '集計・管理画面でも年度（4/1〜翌3/31）を選択して確認できるように改善しました。',
+                    '直接記録モーダルから「欠席」を整理し、区分に「全休」選択時は自動で科目・時限が省略されるよう最適化しました。',
+                    'アカウントごとのFirestoreデータ同期構造を完全に強化しました。'
+                ]
+            },
+            {
+                version: 'ver 1.2',
+                date: '2026.10.26',
+                contents: [
+                    '時間割の時限追加および時限削除に対応しました。',
+                    'Cloud Firestore によるマルチデバイス自動リアルタイム同期機能を搭載しました。'
+                ]
+            }
+        ];
 
         const DAYS_ORDER_DEFAULT = ['mon', 'tue', 'wed', 'thu', 'fri'];
         const DAYS_ORDER_WEEKEND = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -803,7 +852,26 @@
         document.addEventListener('DOMContentLoaded', () => {
             initAuthSystem();
             initGuideModal();
+            renderNewsList();
         });
+
+        function renderNewsList() {
+            const container = document.getElementById('newsContainer');
+            container.innerHTML = '';
+            NEWS_LOGS.forEach(log => {
+                const div = document.createElement('div');
+                div.className = 'p-3.5 bg-noir-950 rounded-xl border border-white/10 space-y-1.5';
+                let listHtml = log.contents.map(c => `<li>${c}</li>`).join('');
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-indigo-300">🎉 バージョン ${log.version} アップデート情報</span>
+                        <span class="text-[10px] text-slate-500 font-mono">${log.date}</span>
+                    </div>
+                    <ul class="text-slate-400 leading-relaxed space-y-1 list-disc list-inside pt-1">${listHtml}</ul>
+                `;
+                container.appendChild(div);
+            });
+        }
 
         function initGuideModal() {
             const guideModal = document.getElementById('guideModal');
@@ -912,7 +980,14 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     masterSubjects = data.masterSubjects || [];
-                    timetable = data.timetable || JSON.parse(JSON.stringify(EMPTY_TIMETABLE));
+                    if (data.timetablePeriods && data.timetablePeriods.length > 0) {
+                        timetablePeriods = data.timetablePeriods;
+                    } else if (data.timetable) {
+                        timetablePeriods = [
+                            { id: 'default', title: '標準 (通年)', startDate: '2026-04-01', endDate: '2027-03-31', timetable: data.timetable }
+                        ];
+                    }
+                    activeTimetableId = data.activeTimetableId || timetablePeriods[0].id;
                     records = data.records || {};
                     subjectLimits = data.subjectLimits || {};
                     subjectWarnMargin = data.subjectWarnMargin || {};
@@ -921,7 +996,6 @@
                     showWeekend = data.showWeekend !== undefined ? data.showWeekend : false;
                     maxTimetablePeriods = data.maxTimetablePeriods || 7;
                 } else {
-                    // 初期データ保存
                     await saveUserDataToFirestore();
                 }
             } catch (e) {
@@ -935,7 +1009,8 @@
                 const docRef = doc(db, 'users', currentUserId);
                 await setDoc(docRef, {
                     masterSubjects,
-                    timetable,
+                    timetablePeriods,
+                    activeTimetableId,
                     records,
                     subjectLimits,
                     subjectWarnMargin,
@@ -950,16 +1025,22 @@
             }
         }
 
+        function getCurrentTimetable() {
+            const activePeriodObj = timetablePeriods.find(p => p.id === activeTimetableId) || timetablePeriods[0];
+            return activePeriodObj ? activePeriodObj.timetable : EMPTY_TIMETABLE;
+        }
+
         function startApp() {
             initLiveClock();
             initTabs();
             initSettingSubTabs();
             initDateSelector();
-            initAcademicYearSelector();
+            initAcademicYearSelectors();
             
             renderTodayTab();
             renderCalendarTab();
             renderStatsTab();
+            renderTimetableTabs();
             renderTimetableGrid();
             renderSettingsTab();
 
@@ -1000,9 +1081,9 @@
                     });
 
                     if (targetTabId === 'tab-today') renderTodayTab();
-                    if (targetTabId === 'tab-calendar') { initAcademicYearSelector(); renderCalendarTab(); }
-                    if (targetTabId === 'tab-stats') renderStatsTab();
-                    if (targetTabId === 'tab-timetable') renderTimetableGrid();
+                    if (targetTabId === 'tab-calendar') { initAcademicYearSelectors(); renderCalendarTab(); }
+                    if (targetTabId === 'tab-stats') { initAcademicYearSelectors(); renderStatsTab(); }
+                    if (targetTabId === 'tab-timetable') { renderTimetableTabs(); renderTimetableGrid(); }
                     if (targetTabId === 'tab-settings') renderSettingsTab();
                 });
             });
@@ -1042,31 +1123,61 @@
                 if (e.target.value) {
                     currentTargetDate = e.target.value;
                     selectedCalendarDate = currentTargetDate;
+                    autoSelectTimetableByDate(currentTargetDate);
                     renderTodayTab();
                 }
             });
         }
 
-        function initAcademicYearSelector() {
-            const select = document.getElementById('selectAcademicYear');
-            select.innerHTML = '';
-            
+        function autoSelectTimetableByDate(dateStr) {
+            const d = new Date(dateStr);
+            const matchedPeriod = timetablePeriods.find(p => {
+                const start = new Date(p.startDate);
+                const end = new Date(p.endDate);
+                return d >= start && d <= end;
+            });
+            if (matchedPeriod) {
+                activeTimetableId = matchedPeriod.id;
+            }
+        }
+
+        function initAcademicYearSelectors() {
             const currentYear = new Date().getFullYear();
             const years = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
             
-            years.forEach(y => {
-                const opt = document.createElement('option');
-                opt.value = y;
-                opt.textContent = `${y}年度 (4/1〜翌3/31)`;
-                if (y === currentAcademicYear) opt.selected = true;
-                select.appendChild(opt);
-            });
+            // カレンダー用
+            const selectCal = document.getElementById('selectAcademicYear');
+            if (selectCal) {
+                selectCal.innerHTML = '';
+                years.forEach(y => {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.textContent = `${y}年度 (4/1〜翌3/31)`;
+                    if (y === currentAcademicYear) opt.selected = true;
+                    selectCal.appendChild(opt);
+                });
+                selectCal.onchange = (e) => {
+                    currentAcademicYear = parseInt(e.target.value);
+                    renderCalendarTab();
+                };
+            }
 
-            select.addEventListener('change', (e) => {
-                currentAcademicYear = parseInt(e.target.value);
-                renderCalendarTab();
-                renderStatsTab();
-            });
+            // 集計用
+            const selectStats = document.getElementById('selectStatsAcademicYear');
+            if (selectStats) {
+                selectStats.innerHTML = '';
+                years.forEach(y => {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.textContent = `${y}年度 (4/1〜翌3/31)`;
+                    if (y === statsAcademicYear) opt.selected = true;
+                    selectStats.appendChild(opt);
+                });
+                selectStats.onchange = (e) => {
+                    statsAcademicYear = parseInt(e.target.value);
+                    renderStatsTab();
+                };
+            }
         }
 
         function getActiveDayKey(dateStr) {
@@ -1086,11 +1197,13 @@
         }
 
         function renderTodayTab() {
+            autoSelectTimetableByDate(currentTargetDate);
             const dObj = new Date(currentTargetDate);
             const dateStrFormatted = `${dObj.getFullYear()}.${String(dObj.getMonth() + 1).padStart(2, '0')}.${String(dObj.getDate()).padStart(2, '0')} ${['SUN','MON','TUE','WED','THU','FRI','SAT'][dObj.getDay()]}`;
             document.getElementById('currentDateStr').textContent = dateStrFormatted;
 
             const activeDayKey = getActiveDayKey(currentTargetDate);
+            const currentTimetable = getCurrentTimetable();
             
             const daySelect = document.getElementById('selectTodayScheduleDay');
             daySelect.value = (records[currentTargetDate] && records[currentTargetDate].overrideDay) ? records[currentTargetDate].overrideDay : 'auto';
@@ -1118,13 +1231,13 @@
 
             document.getElementById('todayDayBadge').textContent = DAYS_MAP_LONG[activeDayKey] || '休日';
 
-            let daySubjects = (timetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
+            let daySubjects = (currentTimetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
             
             if (activeDayKey === 'short') {
                 document.getElementById('todayDayBadge').textContent = '短縮・午前授業';
                 const actualKey = getDayKeyByDate(currentTargetDate);
                 const maxPeriod = parseInt(document.getElementById('selectShortMaxPeriod').value) || 4;
-                daySubjects = (timetable[actualKey] || []).slice(0, maxPeriod);
+                daySubjects = (currentTimetable[actualKey] || []).slice(0, maxPeriod);
             }
 
             if (daySubjects.length === 0 || daySubjects.every((s, idx) => {
@@ -1350,7 +1463,7 @@
             listEl.innerHTML = '';
 
             if (absences.length === 0) {
-                listEl.innerHTML = '<div class="text-slate-500 p-3 text-center bg-white/[0.02] rounded-xl">この日の欠席・遅刻記録はありません</div>';
+                listEl.innerHTML = '<div class="text-slate-500 p-3 text-center bg-white/[0.02] rounded-xl">この日の記録はありません</div>';
                 return;
             }
 
@@ -1386,7 +1499,9 @@
 
         function getAllActiveSubjects() {
             const subjectsSet = new Set(masterSubjects);
-            Object.values(timetable).forEach(list => list.forEach(s => { if(s.subject) subjectsSet.add(s.subject); }));
+            timetablePeriods.forEach(p => {
+                Object.values(p.timetable).forEach(list => list.forEach(s => { if(s.subject) subjectsSet.add(s.subject); }));
+            });
             Object.values(records).forEach(rec => { 
                 if(rec.absences) {
                     rec.absences.forEach(a => { if(a.subject && a.period !== 0) subjectsSet.add(a.subject); }); 
@@ -1403,8 +1518,8 @@
                 subjectCounts[s] = { count: 0 };
             });
 
-            const startYearDate = new Date(currentAcademicYear, 3, 1);
-            const endYearDate = new Date(currentAcademicYear + 1, 2, 31, 23, 59, 59);
+            const startYearDate = new Date(statsAcademicYear, 3, 1);
+            const endYearDate = new Date(statsAcademicYear + 1, 2, 31, 23, 59, 59);
 
             Object.keys(records).forEach(dateStr => {
                 const d = new Date(dateStr);
@@ -1505,7 +1620,7 @@
             history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (history.length === 0) {
-                listContainer.innerHTML = '<div class="text-center text-slate-500 py-6">この教科の欠席記録はありません</div>';
+                listContainer.innerHTML = '<div class="text-center text-slate-500 py-6">この教科の欠席履歴はありません</div>';
             } else {
                 history.forEach(item => {
                     const row = document.createElement('div');
@@ -1651,7 +1766,30 @@
             showToast('科目を削除しました', 'emerald');
         };
 
+        function renderTimetableTabs() {
+            const container = document.getElementById('timetablePeriodTabsContainer');
+            container.innerHTML = '';
+
+            timetablePeriods.forEach(p => {
+                const btn = document.createElement('button');
+                const isSelected = p.id === activeTimetableId;
+                btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition border ${
+                    isSelected ? 'bg-indigo-500 text-white border-indigo-400/50 shadow' : 'bg-noir-950 text-slate-400 border-white/10 hover:text-white'
+                }`;
+                btn.textContent = `${p.title} (${p.startDate} 〜 ${p.endDate})`;
+                btn.onclick = () => {
+                    activeTimetableId = p.id;
+                    renderTimetableTabs();
+                    renderTimetableGrid();
+                };
+                container.appendChild(btn);
+            });
+        }
+
         function renderTimetableGrid() {
+            const activePeriodObj = timetablePeriods.find(p => p.id === activeTimetableId) || timetablePeriods[0];
+            document.getElementById('currentTimetablePeriodTitle').textContent = `時間割設定 (${activePeriodObj.title})`;
+
             const headerRow = document.getElementById('timetableHeaderRow');
             const activeDays = showWeekend ? DAYS_ORDER_WEEKEND : DAYS_ORDER_DEFAULT;
 
@@ -1664,6 +1802,8 @@
             const tbody = document.getElementById('timetableGrid');
             tbody.innerHTML = '';
 
+            const currentTimetable = getCurrentTimetable();
+
             for (let p = 1; p <= maxTimetablePeriods; p++) {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-white/5 hover:bg-white/[0.01] transition';
@@ -1671,7 +1811,7 @@
                 let rowHtml = `<td class="p-2.5 font-mono text-slate-500 bg-white/[0.01] font-bold">${p}</td>`;
 
                 activeDays.forEach(dayKey => {
-                    const cellData = (timetable[dayKey] && timetable[dayKey][p - 1]) ? timetable[dayKey][p - 1] : { subject: '' };
+                    const cellData = (currentTimetable[dayKey] && currentTimetable[dayKey][p - 1]) ? currentTimetable[dayKey][p - 1] : { subject: '' };
                     const name = cellData.subject;
 
                     rowHtml += `
@@ -1781,13 +1921,15 @@
                     }
                 }
 
-                if (!timetable[dayKey]) timetable[dayKey] = Array(maxTimetablePeriods).fill({ subject: '' });
-                while (timetable[dayKey].length <= periodIndex) {
-                    timetable[dayKey].push({ subject: '' });
+                const activePeriodObj = timetablePeriods.find(p => p.id === activeTimetableId);
+                if (activePeriodObj) {
+                    if (!activePeriodObj.timetable[dayKey]) activePeriodObj.timetable[dayKey] = Array(maxTimetablePeriods).fill({ subject: '' });
+                    while (activePeriodObj.timetable[dayKey].length <= periodIndex) {
+                        activePeriodObj.timetable[dayKey].push({ subject: '' });
+                    }
+                    activePeriodObj.timetable[dayKey][periodIndex] = { subject: name };
+                    saveUserDataToFirestore();
                 }
-
-                timetable[dayKey][periodIndex] = { subject: name };
-                saveUserDataToFirestore();
 
                 document.getElementById('editModal').classList.add('hidden');
                 renderTimetableGrid();
@@ -1803,14 +1945,15 @@
                 showToast(showWeekend ? '土日を表示しました' : '土日を非表示にしました', 'emerald');
             });
 
-            // 時限追加ボタン
             document.getElementById('btnAddPeriod').addEventListener('click', () => {
                 if (maxTimetablePeriods < 12) {
                     maxTimetablePeriods++;
-                    Object.keys(timetable).forEach(k => {
-                        while (timetable[k].length < maxTimetablePeriods) {
-                            timetable[k].push({ subject: '' });
-                        }
+                    timetablePeriods.forEach(p => {
+                        Object.keys(p.timetable).forEach(k => {
+                            while (p.timetable[k].length < maxTimetablePeriods) {
+                                p.timetable[k].push({ subject: '' });
+                            }
+                        });
                     });
                     saveUserDataToFirestore();
                     renderTimetableGrid();
@@ -1820,15 +1963,16 @@
                 }
             });
 
-            // 時限削除ボタン
             document.getElementById('btnRemovePeriod').addEventListener('click', () => {
                 if (maxTimetablePeriods > 1) {
                     showConfirmModal('時限の削除', `最終時限（${maxTimetablePeriods}限目）を削除しますか？`, () => {
                         maxTimetablePeriods--;
-                        Object.keys(timetable).forEach(k => {
-                            if (timetable[k].length > maxTimetablePeriods) {
-                                timetable[k] = timetable[k].slice(0, maxTimetablePeriods);
-                            }
+                        timetablePeriods.forEach(p => {
+                            Object.keys(p.timetable).forEach(k => {
+                                if (p.timetable[k].length > maxTimetablePeriods) {
+                                    p.timetable[k] = p.timetable[k].slice(0, maxTimetablePeriods);
+                                }
+                            });
                         });
                         saveUserDataToFirestore();
                         renderTimetableGrid();
@@ -1839,6 +1983,43 @@
                 } else {
                     alert('これ以上削除できません。');
                 }
+            });
+
+            // 時間割の期間追加モーダル
+            const periodModal = document.getElementById('timetablePeriodModal');
+            document.getElementById('btnAddTimetablePeriod').addEventListener('click', () => {
+                document.getElementById('inputPeriodTitle').value = '';
+                document.getElementById('inputPeriodStart').value = new Date().toISOString().split('T')[0];
+                document.getElementById('inputPeriodEnd').value = '2026-07-31';
+                periodModal.classList.remove('hidden');
+            });
+            document.getElementById('btnCancelTimetablePeriod').addEventListener('click', () => {
+                periodModal.classList.add('hidden');
+            });
+            document.getElementById('btnSaveTimetablePeriod').addEventListener('click', () => {
+                const title = document.getElementById('inputPeriodTitle').value.trim();
+                const startDate = document.getElementById('inputPeriodStart').value;
+                const endDate = document.getElementById('inputPeriodEnd').value;
+
+                if (!title || !startDate || !endDate) {
+                    alert('すべての項目を入力してください。');
+                    return;
+                }
+
+                const newId = 'p_' + Date.now();
+                timetablePeriods.push({
+                    id: newId,
+                    title,
+                    startDate,
+                    endDate,
+                    timetable: JSON.parse(JSON.stringify(EMPTY_TIMETABLE))
+                });
+                activeTimetableId = newId;
+                saveUserDataToFirestore();
+                periodModal.classList.add('hidden');
+                renderTimetableTabs();
+                renderTimetableGrid();
+                showToast('新しい時間割期間を追加しました', 'emerald');
             });
 
             document.getElementById('selectOverrideMasterSubject').addEventListener('change', (e) => {
@@ -1900,11 +2081,12 @@
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
-                    let daySubjects = (timetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
+                    const currentTimetable = getCurrentTimetable();
+                    let daySubjects = (currentTimetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
                     
                     if (activeDayKey === 'short') {
                         const maxP = parseInt(document.getElementById('selectShortMaxPeriod').value) || 4;
-                        daySubjects = (timetable[getDayKeyByDate(currentTargetDate)] || []).slice(0, maxP);
+                        daySubjects = (currentTimetable[getDayKeyByDate(currentTargetDate)] || []).slice(0, maxP);
                     }
 
                     const newAbsences = [];
@@ -1989,10 +2171,11 @@
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
-                    let daySubjects = (timetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
+                    const currentTimetable = getCurrentTimetable();
+                    let daySubjects = (currentTimetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
                     if (activeDayKey === 'short') {
                         const maxP = parseInt(document.getElementById('selectShortMaxPeriod').value) || 4;
-                        daySubjects = (timetable[getDayKeyByDate(currentTargetDate)] || []).slice(0, maxP);
+                        daySubjects = (currentTimetable[getDayKeyByDate(currentTargetDate)] || []).slice(0, maxP);
                     }
 
                     let currentAbs = [];
@@ -2037,10 +2220,11 @@
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
-                    let daySubjects = (timetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
+                    const currentTimetable = getCurrentTimetable();
+                    let daySubjects = (currentTimetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
                     if (activeDayKey === 'short') {
                         const maxP = parseInt(document.getElementById('selectShortMaxPeriod').value) || 4;
-                        daySubjects = (timetable[getDayKeyByDate(currentTargetDate)] || []).slice(0, maxP);
+                        daySubjects = (currentTimetable[getDayKeyByDate(currentTargetDate)] || []).slice(0, maxP);
                     }
 
                     let currentAbs = [];
@@ -2110,7 +2294,7 @@
                 
                 const select = document.getElementById('addAbsenceSubjectSelect');
                 populateSubjectDropdown(select);
-                document.getElementById('addAbsenceTypeSelect').value = '欠席';
+                document.getElementById('addAbsenceTypeSelect').value = '遅刻';
                 document.getElementById('subjectPeriodGroup').classList.remove('hidden');
 
                 document.getElementById('addAbsenceModalTitle').textContent = '記録の追加';
@@ -2122,14 +2306,13 @@
                 
                 const select = document.getElementById('addAbsenceSubjectSelect');
                 populateSubjectDropdown(select);
-                document.getElementById('addAbsenceTypeSelect').value = '欠席';
+                document.getElementById('addAbsenceTypeSelect').value = '遅刻';
                 document.getElementById('subjectPeriodGroup').classList.remove('hidden');
 
-                document.getElementById('addAbsenceModalTitle').textContent = '授業欠席の直接記録';
+                document.getElementById('addAbsenceModalTitle').textContent = '授業遅刻・早退・全休の直接記録';
                 addAbsenceModal.classList.remove('hidden');
             });
 
-            // 区分切替時に全休なら科目・時限選択を非表示にする
             document.getElementById('addAbsenceTypeSelect').addEventListener('change', (e) => {
                 const group = document.getElementById('subjectPeriodGroup');
                 if (e.target.value === '全休') {
@@ -2153,7 +2336,6 @@
             });
 
             document.getElementById('btnSaveAddAbsence').addEventListener('click', () => {
-                // 日付未入力時は本日を自動設定
                 const targetDate = document.getElementById('inputAddAbsenceDate').value || new Date().toISOString().split('T')[0];
                 const noteType = document.getElementById('addAbsenceTypeSelect').value;
 
@@ -2196,14 +2378,17 @@
             });
 
             document.getElementById('btnResetTimetable').addEventListener('click', () => {
-                showConfirmModal('時間割のリセット', '時間割の登録内容をすべてリセットしますか？', () => {
-                    timetable = JSON.parse(JSON.stringify(EMPTY_TIMETABLE));
-                    saveUserDataToFirestore();
-                    renderTimetableGrid();
-                    renderTodayTab();
-                    renderStatsTab();
-                    renderSettingsTab();
-                    showToast('時間割をリセットしました', 'emerald');
+                showConfirmModal('時間割のリセット', '現在の有効期間の時間割をすべてリセットしますか？', () => {
+                    const activePeriodObj = timetablePeriods.find(p => p.id === activeTimetableId);
+                    if (activePeriodObj) {
+                        activePeriodObj.timetable = JSON.parse(JSON.stringify(EMPTY_TIMETABLE));
+                        saveUserDataToFirestore();
+                        renderTimetableGrid();
+                        renderTodayTab();
+                        renderStatsTab();
+                        renderSettingsTab();
+                        showToast('時間割をリセットしました', 'emerald');
+                    }
                 });
             });
         }
