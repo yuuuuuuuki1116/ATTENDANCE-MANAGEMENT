@@ -78,6 +78,7 @@ body {
   margin-bottom: 18px;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .form-group label {
@@ -87,46 +88,49 @@ body {
   font-weight: 500;
 }
 
-/* すべての入力欄（メールアドレス、パスワード）の共通基本スタイル */
+/* すべての入力欄の共通ベース */
 input[type="email"],
 input[type="password"],
 input[type="text"] {
-  width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
   padding: 12px;
   border: 1px solid #cccccc;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: 16px; /* スマホで自動ズームを防ぐため16px以上に指定 */
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   background-color: #ffffff;
   color: #333333;
 }
 
-/* パスワード入力欄のレイアウト */
+/* パスワード入力欄のラッパー */
 .password-wrapper {
   position: relative;
-  display: flex;
-  align-items: center;
+  display: block;
   width: 100%;
 }
 
-/* パスワード欄は右側の「表示」ボタンと重ならないように右余白を確保 */
+/* パスワード（type="password" / type="text" どちらも同じサイズ・右余白を固定） */
 .password-wrapper input[type="password"],
 .password-wrapper input[type="text"] {
-  padding-right: 65px;
+  width: 100% !important;
+  padding-right: 65px; /* ボタン分の余白 */
 }
 
-/* 表示・非表示切り替えボタンの位置固定 */
+/* 表示・非表示切り替えボタンの位置 */
 .toggle-password {
   position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   right: 12px;
   background: none;
   border: none;
   color: #666;
   font-size: 0.85rem;
   cursor: pointer;
-  padding: 4px 8px;
-  z-index: 2;
+  padding: 6px 8px;
+  z-index: 5;
 }
 
 .toggle-password:hover {
