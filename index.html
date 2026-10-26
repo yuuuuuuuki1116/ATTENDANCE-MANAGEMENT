@@ -661,6 +661,8 @@
     </nav>
 
     <!-- Firebase SDKs -->
+   <!-- Firebase SDKs -->
+    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -738,6 +740,11 @@
 
             onAuthStateChanged(auth, (user) => {
                 if (user) {
+                    // メール認証が完了しているかチェック
+                    if (!user.emailVerified) {
+                        authModal.classList.remove('hidden');
+                        return;
+                    }
                     currentUserId = user.uid;
                     document.getElementById('currentLoginUserLabel').textContent = user.email;
                     authModal.classList.add('hidden');
@@ -781,10 +788,19 @@
                     if (authMode === 'register') {
                         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                         await sendEmailVerification(userCredential.user);
-                        alert('確認メールを送信しました！メール内のリンクをクリックして認証を完了させてください。');
-                        signOut(auth);
+                        alert('確認メールを送信しました！メール内のリンクをクリックして認証を完了させてからログインしてください。');
+                        await signOut(auth);
                     } else {
                         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                        const user = userCredential.user;
+
+                        // ログイン時にメール確認が済んでいるかチェック
+                        if (!user.emailVerified) {
+                            alert('メールアドレスの確認が完了していません。受信トレイの確認メール内にあるリンクをクリックしてください。');
+                            await signOut(auth);
+                            return;
+                        }
+
                         showToast('ログインしました', 'emerald');
                     }
                 } catch (error) {
