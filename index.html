@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欠席管理 - Attendance Tracker Pro (Firebase Auth)</title>
+    <title>授業欠席・単位管理システム - ATTENDANCE MANAGEMENT (ver 1.1)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -75,8 +75,11 @@
                     <i class="fa-solid fa-cube text-xs"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-sm tracking-widest text-white uppercase">ATTENDANCE MANAGEMENT</h1>
-                    <p class="text-[10px] text-slate-400 tracking-wider">授業欠席・単位管理システム (Firebase Auth)</p>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-bold text-sm tracking-widest text-white uppercase">ATTENDANCE MANAGEMENT</h1>
+                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-500/30 font-mono">ver 1.1</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 tracking-wider">授業欠席・単位管理システム</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -148,10 +151,11 @@
                             <option value="wed">水曜授業として表示</option>
                             <option value="thu">木曜授業として表示</option>
                             <option value="fri">金曜授業として表示</option>
+                            <option value="sat">土曜授業として表示</option>
+                            <option value="sun">日曜授業として表示</option>
                         </select>
                     </div>
 
-                    <!-- 短縮授業の終了コマ指定 -->
                     <div id="shortDayOptionBox" class="hidden p-2.5 bg-indigo-950/30 border border-indigo-500/20 rounded-xl flex items-center justify-between text-xs">
                         <span class="text-indigo-200 text-[11px]">本日は何時限目で終わりですか？</span>
                         <div class="flex items-center gap-1">
@@ -173,6 +177,29 @@
 
         <!-- Tab 2: 欠席カレンダー -->
         <section id="tab-calendar" class="tab-content hidden space-y-5">
+            <!-- 年度選択 ＆ カレンダー統計ヘッダー -->
+            <div class="glass-panel p-4 rounded-2xl flex flex-wrap justify-between items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400 font-medium">対象年度:</span>
+                    <select id="selectAcademicYear" class="bg-noir-950 text-indigo-300 font-bold border border-white/10 rounded-xl px-3 py-1.5 text-xs focus:outline-none">
+                        <!-- 動的に年度選択肢を生成 -->
+                    </select>
+                </div>
+                
+                <!-- 全休・遅刻・早退 合計カウンター -->
+                <div class="flex items-center gap-3 text-xs font-bold">
+                    <div class="bg-rose-500/10 border border-rose-500/30 text-rose-300 px-3 py-1 rounded-xl flex items-center gap-1.5">
+                        <span>全休:</span> <span id="counterTotalAllAbsent" class="text-sm font-mono font-extrabold">0</span> 回
+                    </div>
+                    <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 px-3 py-1 rounded-xl flex items-center gap-1.5">
+                        <span>遅刻:</span> <span id="counterTotalLate" class="text-sm font-mono font-extrabold">0</span> 回
+                    </div>
+                    <div class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 px-3 py-1 rounded-xl flex items-center gap-1.5">
+                        <span>早退:</span> <span id="counterTotalEarly" class="text-sm font-mono font-extrabold">0</span> 回
+                    </div>
+                </div>
+            </div>
+
             <div class="glass-panel p-5 rounded-2xl space-y-4">
                 <div class="flex justify-between items-center">
                     <h2 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
@@ -215,7 +242,7 @@
                             <i class="fa-solid fa-pen text-[10px]"></i> 日付メモ編集
                         </button>
                         <button id="btnOpenAddAbsenceModal" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-medium text-xs rounded-xl border border-white/10 transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-plus text-[10px]"></i> 欠席追加
+                            <i class="fa-solid fa-plus text-[10px]"></i> 記録を追加
                         </button>
                     </div>
                 </div>
@@ -230,22 +257,27 @@
 
         <!-- Tab 3: 集計・管理 -->
         <section id="tab-stats" class="tab-content hidden space-y-5">
-            <div class="flex justify-between items-baseline">
-                <h2 class="text-base font-bold text-white tracking-wide">教科別 欠席状況</h2>
-                <span class="text-xs text-slate-400">科目名クリックで詳細確認</span>
+            <div class="flex justify-between items-center flex-wrap gap-2">
+                <div>
+                    <h2 class="text-base font-bold text-white tracking-wide">教科別 欠席状況</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">科目名クリックで詳細確認・日付未指定の欠席追加も可能です</p>
+                </div>
+                <button id="btnOpenUndatedAbsenceModal" class="px-3.5 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-xs"></i> 授業欠席の直接記録
+                </button>
             </div>
 
             <div class="grid grid-cols-3 gap-3">
                 <div class="glass-panel p-3.5 rounded-xl text-center">
-                    <span class="text-[11px] text-slate-400 block mb-0.5">登録教科数</span>
+                    <span class="text-[11px] text-slate-400 block mb-0.5">履修科目数</span>
                     <span id="statTotalSubjects" class="text-lg font-extrabold text-white">0</span>
                 </div>
                 <div class="glass-panel p-3.5 rounded-xl text-center border-amber-500/20">
-                    <span class="text-[11px] text-amber-400/80 block mb-0.5">注意領域</span>
+                    <span class="text-[11px] text-amber-400/80 block mb-0.5">注意</span>
                     <span id="statWarningSubjects" class="text-lg font-extrabold text-amber-400">0</span>
                 </div>
                 <div class="glass-panel p-3.5 rounded-xl text-center border-rose-500/20">
-                    <span class="text-[11px] text-rose-400/80 block mb-0.5">単位危険</span>
+                    <span class="text-[11px] text-rose-400/80 block mb-0.5">危険</span>
                     <span id="statDangerSubjects" class="text-lg font-extrabold text-rose-400">0</span>
                 </div>
             </div>
@@ -255,26 +287,29 @@
 
         <!-- Tab 4: 時間割設定 -->
         <section id="tab-timetable" class="tab-content hidden space-y-5">
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start flex-wrap gap-2">
                 <div>
-                    <h2 class="text-base font-bold text-white tracking-wide">時間割設定 (1〜7限)</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">コマを選択して登録科目から教科を選択してください</p>
+                    <h2 class="text-base font-bold text-white tracking-wide">時間割設定</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">コマを選択して登録科目から教科を選択し決定してください</p>
                 </div>
-                <button id="btnResetTimetable" class="text-xs text-slate-500 hover:text-rose-400 transition flex items-center gap-1 pt-1">
-                    <i class="fa-solid fa-rotate-left text-[10px]"></i> 全クリア
-                </button>
+                <div class="flex items-center gap-2">
+                    <button id="btnToggleWeekend" class="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl border border-white/10 transition">
+                        土日の表示切替
+                    </button>
+                    <button id="btnAddPeriod" class="text-xs px-3 py-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 rounded-xl border border-indigo-500/30 transition">
+                        + 時限拡張
+                    </button>
+                    <button id="btnResetTimetable" class="text-xs text-slate-500 hover:text-rose-400 transition flex items-center gap-1 py-1.5">
+                        <i class="fa-solid fa-rotate-left text-[10px]"></i> 全クリア
+                    </button>
+                </div>
             </div>
 
             <div class="glass-panel rounded-2xl overflow-x-auto no-scrollbar">
                 <table class="w-full text-xs text-center border-collapse min-w-[540px]">
                     <thead>
-                        <tr class="border-b border-white/5 text-slate-400 font-medium">
-                            <th class="p-3 w-12 bg-white/[0.02]">時限</th>
-                            <th class="p-3 font-semibold text-slate-200">月</th>
-                            <th class="p-3 font-semibold text-slate-200">火</th>
-                            <th class="p-3 font-semibold text-slate-200">水</th>
-                            <th class="p-3 font-semibold text-slate-200">木</th>
-                            <th class="p-3 font-semibold text-slate-200">金</th>
+                        <tr id="timetableHeaderRow" class="border-b border-white/5 text-slate-400 font-medium">
+                            <!-- 動的に曜日ヘッダーを生成 -->
                         </tr>
                     </thead>
                     <tbody id="timetableGrid"></tbody>
@@ -282,16 +317,21 @@
             </div>
         </section>
 
-        <!-- Tab 5: 設定 -->
+        <!-- Tab 5: 設定 & お知らせ / お問い合わせ -->
         <section id="tab-settings" class="tab-content hidden space-y-5">
             
-            <!-- 設定サブナビゲーション (タブボタン) -->
             <div class="flex border-b border-white/10 pb-2 gap-2 overflow-x-auto no-scrollbar">
                 <button data-setting-target="set-sub-subjects" class="setting-nav-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-indigo-500 text-white border border-indigo-400/40 shrink-0 flex items-center gap-1.5">
                     <i class="fa-solid fa-book-bookmark"></i> 履修科目登録
                 </button>
                 <button data-setting-target="set-sub-alerts" class="setting-nav-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-white/5 hover:bg-white/10 text-slate-400 border border-white/5 shrink-0 flex items-center gap-1.5">
                     <i class="fa-solid fa-triangle-exclamation"></i> 注意・警告設定
+                </button>
+                <button data-setting-target="set-sub-news" class="setting-nav-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-white/5 hover:bg-white/10 text-slate-400 border border-white/5 shrink-0 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bullhorn"></i> お知らせ
+                </button>
+                <button data-setting-target="set-sub-contact" class="setting-nav-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-white/5 hover:bg-white/10 text-slate-400 border border-white/5 shrink-0 flex items-center gap-1.5">
+                    <i class="fa-solid fa-headset"></i> お問い合わせ
                 </button>
             </div>
 
@@ -306,7 +346,7 @@
                     </div>
 
                     <div class="flex gap-2">
-                        <input type="text" id="inputNewMasterSubject" placeholder="新規科目名を入力 (例: プログラミング基礎)" class="flex-1 bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white placeholder-slate-600 text-xs focus:outline-none focus:border-indigo-500/50">
+                        <input type="text" id="inputNewMasterSubject" placeholder="（例：数学）" class="flex-1 bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white placeholder-slate-600 text-xs focus:outline-none focus:border-indigo-500/50">
                         <button id="btnAddMasterSubject" class="px-4 py-2.5 bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white font-bold text-xs rounded-xl transition flex items-center gap-1 shrink-0">
                             <i class="fa-solid fa-plus text-xs"></i> 追加
                         </button>
@@ -323,10 +363,55 @@
                         <h3 class="font-bold text-sm text-amber-400 flex items-center gap-2">
                             <i class="fa-solid fa-sliders"></i> 注意・警告回数の個別設定
                         </h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">科目ごとの「単位危険の上限回数」と「注意表示する残り回数」を設定します。</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">未入力の場合はデフォルトの判定回数（単位危険：4回、注意：残り1回）が自動で適用されます。</p>
                     </div>
 
                     <div id="subjectSettingsContainer" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- サブ設定 3: お知らせ -->
+            <div id="set-sub-news" class="setting-sub-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-5 space-y-4">
+                    <div class="border-b border-white/5 pb-3">
+                        <h3 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
+                            <i class="fa-solid fa-bullhorn text-indigo-400"></i> お知らせ・アップデート情報
+                        </h3>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3.5 bg-noir-950 rounded-xl border border-white/10 space-y-1.5">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-indigo-300">🎉 バージョン 1.1 アップデート情報</span>
+                                <span class="text-[10px] text-slate-500 font-mono">2026.10.26</span>
+                            </div>
+                            <ul class="text-slate-400 leading-relaxed space-y-1 list-disc list-inside pt-1">
+                                <li>遅刻・早退の選択肢に「1限から」を追加しました。</li>
+                                <li>注意・危険の回数を入力しなくても標準値で動作するよう変更しました。</li>
+                                <li>時間割設定時に確定用の「決定ボタン」を追加しました。</li>
+                                <li>集計画面・カレンダー画面からの直接欠席/遅刻/早退記録機能を追加しました。</li>
+                                <li>カレンダーの表示形式を赤丸（欠席）・黄丸（遅刻・早退）に更新しました。</li>
+                                <li>年度（4/1〜翌3/31）切替機能および全休・遅刻・早退のカウンターを追加しました。</li>
+                                <li>時間割に「土・日曜日」および「8限以降」の拡張機能を追加しました。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- サブ設定 4: お問い合わせ -->
+            <div id="set-sub-contact" class="setting-sub-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-5 text-center space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto text-xl">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-white">お問い合わせ</h3>
+                    <p class="text-xs text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 py-2 rounded-xl max-w-xs mx-auto">
+                        🚧 準備中
+                    </p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                        お問い合わせフォームは現在準備中です。今しばらくお待ちください。
+                    </p>
                 </div>
             </div>
 
@@ -338,18 +423,18 @@
     <div id="authModal" class="fixed inset-0 bg-noir-950/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5 border border-white/10">
             
-            <!-- 認証モード切り替えタブ -->
             <div class="flex rounded-xl bg-noir-950 p-1 border border-white/10 text-xs font-bold text-center">
                 <button id="tabLoginMode" class="flex-1 py-2 rounded-lg bg-indigo-500 text-white transition">ログイン</button>
                 <button id="tabRegisterMode" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition">新規アカウント作成</button>
             </div>
 
-            <div class="text-center">
+            <div class="text-center space-y-1">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto text-xl shadow-inner mb-2">
                     <i id="authIcon" class="fa-solid fa-envelope-circle-check"></i>
                 </div>
-                <h3 id="authTitle" class="font-bold text-base text-white">Firebase 認証ログイン</h3>
-                <p id="authDesc" class="text-xs text-slate-400 mt-0.5">メールアドレスとパスワードで安全にログイン</p>
+                <h2 class="font-bold text-base text-white uppercase tracking-wider">ATTENDANCE MANAGEMENT</h2>
+                <p class="text-[11px] text-indigo-300 font-medium">授業欠席・単位管理システム</p>
+                <h3 id="authTitle" class="font-bold text-xs text-slate-400 pt-1">認証ログイン</h3>
             </div>
             
             <div class="space-y-3 text-xs">
@@ -373,13 +458,12 @@
             </div>
         </div>
     </div>
-
     <!-- Modal: App Guide / Help -->
     <div id="guideModal" class="fixed inset-0 bg-noir-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 border border-white/10 max-h-[85vh] flex flex-col">
             <div class="flex justify-between items-center border-b border-white/5 pb-3 shrink-0">
                 <h3 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-question"></i> アプリの使い方ガイド
+                    <i class="fa-solid fa-circle-question"></i> アプリの使い方ガイド (ver 1.1)
                 </h3>
                 <button id="btnCloseGuide" class="text-slate-400 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-sm"></i>
@@ -389,28 +473,28 @@
             <div class="space-y-4 overflow-y-auto no-scrollbar text-xs text-slate-300 pr-1">
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
                     <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-envelope"></i> 1. Firebaseメール認証について
+                        <i class="fa-solid fa-envelope"></i> 1. 認証ログインとメール確認
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        本アプリはFirebase Authenticationを使用しています。新規登録を行うとご登録のメールアドレスに確認メールが届きます。
+                        新規登録後、送信される確認メール内のリンクをクリックして認証を完了させてください。認証済みのアカウントでのみ利用できます。
                     </p>
                 </div>
 
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
                     <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-table-cells"></i> 2. 時間割と科目の登録
+                        <i class="fa-solid fa-table-cells"></i> 2. 時間割の登録と「決定」
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        最初に「設定」タブの「履修科目登録」から受講する科目を追加し、「時間割」タブで各曜日の1〜7限に割り当てます。
+                        「時間割」タブでコマを選択し、科目を選んで「決定」ボタンを押すと保存されます。土日表示や7限以降の拡張も上部ボタンから可能です。
                     </p>
                 </div>
 
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
                     <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-clock-rotate-left"></i> 3. 欠席・遅刻・早退の記録
+                        <i class="fa-solid fa-clock-rotate-left"></i> 3. 欠席・遅刻・早退の記録と年度管理
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        「本日の授業」タブやカレンダータブから、欠席・遅刻・早退や行事日の記録が行えます。
+                        本日の授業、カレンダー、集計画面から直接記録が可能です。カレンダーでは赤丸（欠席）や黄丸（遅刻・早退）で表示され、年度ごとにデータを切り替えて確認できます。
                     </p>
                 </div>
             </div>
@@ -513,6 +597,7 @@
             <div>
                 <label class="block text-xs font-medium text-slate-400 mb-2">何限目から出席しましたか？</label>
                 <select id="modalLateSelect" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white text-xs focus:outline-none focus:border-amber-500/50">
+                    <option value="1">1限から出席（全休扱いなし）</option>
                     <option value="2">2限から出席（1限欠席）</option>
                     <option value="3">3限から出席（1~2限欠席）</option>
                     <option value="4">4限から出席（1~3限欠席）</option>
@@ -539,6 +624,7 @@
             <div>
                 <label class="block text-xs font-medium text-slate-400 mb-2">何限目から早退しましたか？</label>
                 <select id="modalEarlySelect" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white text-xs focus:outline-none focus:border-yellow-500/50">
+                    <option value="1">1限から早退（全限欠席）</option>
                     <option value="2">2限から早退（2~7限欠席）</option>
                     <option value="3">3限から早退（3~7限欠席）</option>
                     <option value="4">4限から早退（4~7限欠席）</option>
@@ -554,7 +640,7 @@
         </div>
     </div>
 
-    <!-- Modal: Edit Timetable Subject -->
+    <!-- Modal: Edit Timetable Subject (with決定 button) -->
     <div id="editModal" class="fixed inset-0 bg-noir-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 border border-white/10">
             <div class="flex justify-between items-center border-b border-white/5 pb-3">
@@ -581,22 +667,27 @@
 
             <div class="flex gap-2.5 pt-2">
                 <button id="btnCancelEdit" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition border border-white/5">キャンセル</button>
-                <button id="btnSaveEdit" class="flex-1 py-2.5 rounded-xl bg-white hover:bg-slate-200 text-noir-950 text-xs font-bold transition">保存する</button>
+                <button id="btnSaveEdit" class="flex-1 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold transition shadow-lg shadow-indigo-500/20">決定</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Add Custom Absence -->
+    <!-- Modal: Add Custom Absence / Direct Absence (Calendar & Stats) -->
     <div id="addAbsenceModal" class="fixed inset-0 bg-noir-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 border border-white/10">
             <div class="border-b border-white/5 pb-3">
                 <h3 class="font-bold text-sm text-white flex items-center gap-2">
                     <i class="fa-solid fa-calendar-plus text-indigo-400"></i>
-                    <span id="addAbsenceModalTitle">欠席の記録</span>
+                    <span id="addAbsenceModalTitle">記録の追加</span>
                 </h3>
             </div>
 
             <div class="space-y-3 text-xs">
+                <div id="addAbsenceDateContainer">
+                    <label class="block font-medium text-slate-400 mb-1.5">日付指定 <span class="text-rose-400">*必須</span></label>
+                    <input type="date" id="inputAddAbsenceDate" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
+                </div>
+
                 <div>
                     <label class="block font-medium text-slate-400 mb-1.5">教科の指定 <span class="text-rose-400">*必須</span></label>
                     <select id="addAbsenceSubjectSelect" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50"></select>
@@ -611,19 +702,24 @@
                     <div>
                         <label class="block font-medium text-slate-400 mb-1.5">時限</label>
                         <select id="addAbsencePeriodSelect" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
-                            <option value="1">1限</option><option value="2">2限</option><option value="3">3限</option><option value="4">4限</option><option value="5">5限</option><option value="6">6限</option><option value="7">7限</option>
+                            <option value="1">1限</option><option value="2">2限</option><option value="3">3限</option><option value="4">4限</option><option value="5">5限</option><option value="6">6限</option><option value="7">7限</option><option value="8">8限</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block font-medium text-slate-400 mb-1.5">メモ / 理由</label>
-                        <input type="text" id="addAbsenceNote" placeholder="例: 体調不良" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500/50">
+                        <label class="block font-medium text-slate-400 mb-1.5">区分 / 理由</label>
+                        <select id="addAbsenceTypeSelect" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
+                            <option value="欠席">欠席</option>
+                            <option value="遅刻">遅刻</option>
+                            <option value="早退">早退</option>
+                            <option value="全休">全休</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
             <div class="flex gap-2.5 pt-2">
                 <button id="btnCancelAddAbsence" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition border border-white/5">キャンセル</button>
-                <button id="btnSaveAddAbsence" class="flex-1 py-2.5 rounded-xl bg-white hover:bg-slate-200 text-noir-950 text-xs font-bold transition">記録を追加</button>
+                <button id="btnSaveAddAbsence" class="flex-1 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold transition shadow-lg shadow-indigo-500/20">決定</button>
             </div>
         </div>
     </div>
@@ -660,9 +756,7 @@
         </div>
     </nav>
 
-    <!-- Firebase SDKs -->
-   <!-- Firebase SDKs -->
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -685,7 +779,9 @@
             tue: Array(7).fill({ subject: '' }),
             wed: Array(7).fill({ subject: '' }),
             thu: Array(7).fill({ subject: '' }),
-            fri: Array(7).fill({ subject: '' })
+            fri: Array(7).fill({ subject: '' }),
+            sat: Array(7).fill({ subject: '' }),
+            sun: Array(7).fill({ subject: '' })
         };
 
         let currentUserId = null;
@@ -696,17 +792,28 @@
         let subjectWarnMargin = {};
         let dayNotes = {};
         let daySubjectOverrides = {};
+        let showWeekend = false;
+        let maxTimetablePeriods = 7;
 
         let currentTargetDate = new Date().toISOString().split('T')[0];
         let currentCalendarDate = new Date();
         let selectedCalendarDate = currentTargetDate;
+        let currentAcademicYear = getAcademicYear(new Date());
 
         let activeOverridePeriod = null;
         let confirmCallback = null;
-        let authMode = 'login'; // 'login' or 'register'
+        let authMode = 'login';
 
-        const DAYS_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
-        const DAYS_MAP = { mon: '月曜日', tue: '火曜日', wed: '水曜日', thu: '木曜日', fri: '金曜日', sat: '土曜日', sun: '日曜日' };
+        const DAYS_ORDER_DEFAULT = ['mon', 'tue', 'wed', 'thu', 'fri'];
+        const DAYS_ORDER_WEEKEND = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        const DAYS_MAP = { mon: '月', tue: '火', wed: '水', thu: '木', fri: '金', sat: '土', sun: '日' };
+        const DAYS_MAP_LONG = { mon: '月曜日', tue: '火曜日', wed: '水曜日', thu: '木曜日', fri: '金曜日', sat: '土曜日', sun: '日曜日' };
+
+        function getAcademicYear(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = dateObj.getMonth() + 1;
+            return m < 4 ? y - 1 : y;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             initAuthSystem();
@@ -735,12 +842,10 @@
             const tabLogin = document.getElementById('tabLoginMode');
             const tabRegister = document.getElementById('tabRegisterMode');
             const authTitle = document.getElementById('authTitle');
-            const authDesc = document.getElementById('authDesc');
             const registerRules = document.getElementById('registerRules');
 
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    // メール認証が完了しているかチェック
                     if (!user.emailVerified) {
                         authModal.classList.remove('hidden');
                         return;
@@ -759,8 +864,7 @@
                 authMode = 'login';
                 tabLogin.className = 'flex-1 py-2 rounded-lg bg-indigo-500 text-white transition';
                 tabRegister.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
-                authTitle.textContent = 'Firebase 認証ログイン';
-                authDesc.textContent = 'メールアドレスとパスワードで安全にログイン';
+                authTitle.textContent = '認証ログイン';
                 btnSubmit.textContent = 'ログイン';
                 registerRules.classList.add('hidden');
             });
@@ -770,7 +874,6 @@
                 tabRegister.className = 'flex-1 py-2 rounded-lg bg-indigo-500 text-white transition';
                 tabLogin.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
                 authTitle.textContent = '新規アカウント作成 (確認メール送信)';
-                authDesc.textContent = '登録したメールアドレスに確認メールが送信されます';
                 btnSubmit.textContent = 'アカウントを作成して確認メールを送信';
                 registerRules.classList.remove('hidden');
             });
@@ -794,7 +897,6 @@
                         const userCredential = await signInWithEmailAndPassword(auth, email, password);
                         const user = userCredential.user;
 
-                        // ログイン時にメール確認が済んでいるかチェック
                         if (!user.emailVerified) {
                             alert('メールアドレスの確認が完了していません。受信トレイの確認メール内にあるリンクをクリックしてください。');
                             await signOut(auth);
@@ -825,6 +927,8 @@
             subjectWarnMargin = JSON.parse(localStorage.getItem(prefix + 'subject_warn_margin')) || {};
             dayNotes = JSON.parse(localStorage.getItem(prefix + 'day_notes')) || {};
             daySubjectOverrides = JSON.parse(localStorage.getItem(prefix + 'day_subject_overrides')) || {};
+            showWeekend = JSON.parse(localStorage.getItem(prefix + 'show_weekend')) || false;
+            maxTimetablePeriods = parseInt(localStorage.getItem(prefix + 'max_periods')) || 7;
         }
 
         function saveUserData() {
@@ -837,6 +941,8 @@
             localStorage.setItem(prefix + 'subject_warn_margin', JSON.stringify(subjectWarnMargin));
             localStorage.setItem(prefix + 'day_notes', JSON.stringify(dayNotes));
             localStorage.setItem(prefix + 'day_subject_overrides', JSON.stringify(daySubjectOverrides));
+            localStorage.setItem(prefix + 'show_weekend', JSON.stringify(showWeekend));
+            localStorage.setItem(prefix + 'max_periods', maxTimetablePeriods);
         }
 
         function startApp() {
@@ -844,6 +950,7 @@
             initTabs();
             initSettingSubTabs();
             initDateSelector();
+            initAcademicYearSelector();
             
             renderTodayTab();
             renderCalendarTab();
@@ -888,7 +995,7 @@
                     });
 
                     if (targetTabId === 'tab-today') renderTodayTab();
-                    if (targetTabId === 'tab-calendar') renderCalendarTab();
+                    if (targetTabId === 'tab-calendar') { renderAcademicYearSelector(); renderCalendarTab(); }
                     if (targetTabId === 'tab-stats') renderStatsTab();
                     if (targetTabId === 'tab-timetable') renderTimetableGrid();
                     if (targetTabId === 'tab-settings') renderSettingsTab();
@@ -932,6 +1039,28 @@
                     selectedCalendarDate = currentTargetDate;
                     renderTodayTab();
                 }
+            });
+        }
+
+        function initAcademicYearSelector() {
+            const select = document.getElementById('selectAcademicYear');
+            select.innerHTML = '';
+            
+            const currentYear = new Date().getFullYear();
+            const years = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
+            
+            years.forEach(y => {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = `${y}年度 (4/1〜翌3/31)`;
+                if (y === currentAcademicYear) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            select.addEventListener('change', (e) => {
+                currentAcademicYear = parseInt(e.target.value);
+                renderCalendarTab();
+                renderStatsTab();
             });
         }
 
@@ -982,9 +1111,9 @@
                 return;
             }
 
-            document.getElementById('todayDayBadge').textContent = DAYS_MAP[activeDayKey] || '休日';
+            document.getElementById('todayDayBadge').textContent = DAYS_MAP_LONG[activeDayKey] || '休日';
 
-            let daySubjects = timetable[activeDayKey] || [];
+            let daySubjects = (timetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
             
             if (activeDayKey === 'short') {
                 document.getElementById('todayDayBadge').textContent = '短縮・午前授業';
@@ -993,7 +1122,7 @@
                 daySubjects = (timetable[actualKey] || []).slice(0, maxPeriod);
             }
 
-            if (activeDayKey === 'sat' || activeDayKey === 'sun' || daySubjects.length === 0 || daySubjects.every((s, idx) => {
+            if (daySubjects.length === 0 || daySubjects.every((s, idx) => {
                 const over = (daySubjectOverrides[currentTargetDate] && daySubjectOverrides[currentTargetDate][idx + 1]);
                 return !s.subject && !over;
             })) {
@@ -1104,6 +1233,32 @@
 
             document.getElementById('calendarMonthTitle').textContent = `${year}年${month + 1}月`;
 
+            // 年度別の全休・遅刻・早退合計カウントを計算
+            let totalAllAbsent = 0;
+            let totalLate = 0;
+            let totalEarly = 0;
+
+            const startYearDate = new Date(currentAcademicYear, 3, 1); // 4月1日
+            const endYearDate = new Date(currentAcademicYear + 1, 2, 31, 23, 59, 59); // 翌年3月31日
+
+            Object.keys(records).forEach(dateStr => {
+                const d = new Date(dateStr);
+                if (d >= startYearDate && d <= endYearDate) {
+                    const rec = records[dateStr];
+                    if (rec && rec.absences) {
+                        rec.absences.forEach(abs => {
+                            if (abs.note === '全休') totalAllAbsent++;
+                            if (abs.note === '遅刻') totalLate++;
+                            if (abs.note === '早退') totalEarly++;
+                        });
+                    }
+                }
+            });
+
+            document.getElementById('counterTotalAllAbsent').textContent = totalAllAbsent;
+            document.getElementById('counterTotalLate').textContent = totalLate;
+            document.getElementById('counterTotalEarly').textContent = totalEarly;
+
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
 
@@ -1130,19 +1285,14 @@
                 if (absences.length > 0) {
                     const hasLate = absences.some(a => a.note === '遅刻');
                     const hasEarly = absences.some(a => a.note === '早退');
-                    const hasAll = absences.some(a => a.note === '全休');
 
-                    if (hasAll || absences.length === 999) {
-                        statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">全休</span>';
-                    } else if (hasLate) {
-                        statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">遅刻</span>';
-                    } else if (hasEarly) {
-                        statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-300 border border-yellow-500/30">早退</span>';
+                    if (hasLate || hasEarly) {
+                        statusBadgeHtml = '<span class="w-3 h-3 rounded-full bg-amber-400 inline-block shadow-lg shadow-amber-400/50" title="遅刻・早退あり"></span>';
                     } else {
-                        statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">欠席</span>';
+                        statusBadgeHtml = '<span class="w-3 h-3 rounded-full bg-rose-500 inline-block shadow-lg shadow-rose-500/50" title="欠席・全休あり"></span>';
                     }
                 } else if (memo) {
-                    statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 truncate max-w-[40px] inline-block">📝メモ</span>';
+                    statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">📝</span>';
                 }
 
                 cell.className = `h-14 rounded-xl p-1.5 font-mono text-xs flex flex-col justify-between items-center cursor-pointer transition relative border ${
@@ -1151,7 +1301,7 @@
 
                 cell.innerHTML = `
                     <span class="${isToday ? 'font-bold text-indigo-400 underline decoration-2' : 'text-slate-300'} text-[11px]">${d}</span>
-                    <div class="w-full text-center truncate">${statusBadgeHtml}</div>
+                    <div class="w-full text-center pb-1">${statusBadgeHtml}</div>
                 `;
 
                 cell.addEventListener('click', () => {
@@ -1209,7 +1359,7 @@
                     <div>
                         <span class="font-bold text-rose-300 mr-2">${isSpecialStatus ? '[行事・特別]' : `[${abs.period}限]`}</span>
                         <span class="font-medium text-slate-200">${abs.subject}</span>
-                        ${abs.note && !isSpecialStatus ? `<span class="text-[10px] text-slate-400 ml-2">(${abs.note})</span>` : ''}
+                        ${abs.note ? `<span class="text-[10px] text-slate-400 ml-2">(${abs.note})</span>` : ''}
                     </div>
                     <button class="text-slate-500 hover:text-rose-400 transition p-1" onclick="deleteCalendarAbsence('${selectedCalendarDate}', ${abs.period})">
                         <i class="fa-solid fa-trash-can text-xs"></i>
@@ -1249,16 +1399,23 @@
                 subjectCounts[s] = { count: 0 };
             });
 
-            Object.values(records).forEach(rec => {
-                if (rec.absences) {
-                    rec.absences.forEach(abs => {
-                        if (abs.subject && abs.period !== 0) {
-                            if (!subjectCounts[abs.subject]) {
-                                subjectCounts[abs.subject] = { count: 0 };
+            const startYearDate = new Date(currentAcademicYear, 3, 1);
+            const endYearDate = new Date(currentAcademicYear + 1, 2, 31, 23, 59, 59);
+
+            Object.keys(records).forEach(dateStr => {
+                const d = new Date(dateStr);
+                if (d >= startYearDate && d <= endYearDate) {
+                    const rec = records[dateStr];
+                    if (rec && rec.absences) {
+                        rec.absences.forEach(abs => {
+                            if (abs.subject && abs.period !== 0) {
+                                if (!subjectCounts[abs.subject]) {
+                                    subjectCounts[abs.subject] = { count: 0 };
+                                }
+                                subjectCounts[abs.subject].count++;
                             }
-                            subjectCounts[abs.subject].count++;
-                        }
-                    });
+                        });
+                    }
                 }
             });
 
@@ -1278,14 +1435,15 @@
 
             subjects.forEach(subjectName => {
                 const count = subjectCounts[subjectName].count;
-                const limit = subjectLimits[subjectName] !== undefined ? subjectLimits[subjectName] : 4;
-                const warnMargin = subjectWarnMargin[subjectName] !== undefined ? subjectWarnMargin[subjectName] : 1;
+                // 注意・危険の回数が未入力の場合はデフォルト値 (危険: 4回, 注意残り: 1回) を適用
+                const limit = subjectLimits[subjectName] !== undefined && subjectLimits[subjectName] !== '' ? parseInt(subjectLimits[subjectName]) : 4;
+                const warnMargin = subjectWarnMargin[subjectName] !== undefined && subjectWarnMargin[subjectName] !== '' ? parseInt(subjectWarnMargin[subjectName]) : 1;
                 const remaining = limit - count;
 
                 let statusBadge = '';
                 if (remaining <= 0) {
                     dangerNum++;
-                    statusBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40">⚠️ 単位危険</span>';
+                    statusBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40">⚠️ 危険</span>';
                 } else if (remaining <= warnMargin) {
                     warningNum++;
                     statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">⚡ 注意 (あと${remaining}回)</span>`;
@@ -1436,8 +1594,8 @@
                 settingsContainer.innerHTML = '<div class="glass-panel p-6 text-center text-slate-500 text-xs rounded-xl">科目が登録されていません。「履修科目登録」タブから追加してください。</div>';
             } else {
                 subjects.forEach(subjectName => {
-                    const limit = subjectLimits[subjectName] !== undefined ? subjectLimits[subjectName] : 4;
-                    const warnMargin = subjectWarnMargin[subjectName] !== undefined ? subjectWarnMargin[subjectName] : 1;
+                    const limit = subjectLimits[subjectName] !== undefined ? subjectLimits[subjectName] : '';
+                    const warnMargin = subjectWarnMargin[subjectName] !== undefined ? subjectWarnMargin[subjectName] : '';
 
                     const card = document.createElement('div');
                     card.className = 'glass-panel p-4 rounded-xl space-y-3 border border-white/5';
@@ -1445,14 +1603,14 @@
                         <h4 class="font-bold text-sm text-slate-100">${subjectName}</h4>
                         <div class="grid grid-cols-2 gap-3 text-xs">
                             <div class="bg-noir-950 p-2.5 rounded-xl border border-white/10 flex flex-col justify-between gap-1">
-                                <span class="text-slate-400 text-[11px]">単位危険の上限 (回)</span>
-                                <input type="number" min="1" max="30" value="${limit}" class="bg-transparent text-rose-300 font-mono font-bold text-sm focus:outline-none limit-input-field" data-subject="${subjectName}">
+                                <span class="text-slate-400 text-[11px]">単位危険の上限 (デフォルト4)</span>
+                                <input type="number" min="1" max="30" value="${limit}" placeholder="未入力可" class="bg-transparent text-rose-300 font-mono font-bold text-sm focus:outline-none limit-input-field" data-subject="${subjectName}">
                             </div>
                             <div class="bg-noir-950 p-2.5 rounded-xl border border-white/10 flex flex-col justify-between gap-1">
-                                <span class="text-slate-400 text-[11px]">注意表示 (残り回数)</span>
+                                <span class="text-slate-400 text-[11px]">注意表示 (残りデフォルト1)</span>
                                 <div class="flex items-center gap-1">
                                     <span class="text-slate-500 text-[10px]">あと</span>
-                                    <input type="number" min="1" max="10" value="${warnMargin}" class="w-full bg-transparent text-amber-300 font-mono font-bold text-sm focus:outline-none warn-margin-input-field" data-subject="${subjectName}">
+                                    <input type="number" min="1" max="10" value="${warnMargin}" placeholder="未入力可" class="w-full bg-transparent text-amber-300 font-mono font-bold text-sm focus:outline-none warn-margin-input-field" data-subject="${subjectName}">
                                     <span class="text-slate-500 text-[10px]">回</span>
                                 </div>
                             </div>
@@ -1464,20 +1622,20 @@
                 settingsContainer.querySelectorAll('.limit-input-field').forEach(input => {
                     input.addEventListener('change', (e) => {
                         const subj = e.target.dataset.subject;
-                        const val = parseInt(e.target.value) || 4;
-                        subjectLimits[subj] = val;
+                        subjectLimits[subj] = e.target.value;
                         saveUserData();
                         showToast('警告上限を保存しました', 'emerald');
+                        renderStatsTab();
                     });
                 });
 
                 settingsContainer.querySelectorAll('.warn-margin-input-field').forEach(input => {
                     input.addEventListener('change', (e) => {
                         const subj = e.target.dataset.subject;
-                        const val = parseInt(e.target.value) || 1;
-                        subjectWarnMargin[subj] = val;
+                        subjectWarnMargin[subj] = e.target.value;
                         saveUserData();
                         showToast('注意設定を保存しました', 'emerald');
+                        renderStatsTab();
                     });
                 });
             }
@@ -1491,16 +1649,25 @@
         };
 
         function renderTimetableGrid() {
+            const headerRow = document.getElementById('timetableHeaderRow');
+            const activeDays = showWeekend ? DAYS_ORDER_WEEKEND : DAYS_ORDER_DEFAULT;
+
+            let headerHtml = '<th class="p-3 w-12 bg-white/[0.02]">時限</th>';
+            activeDays.forEach(dayKey => {
+                headerHtml += `<th class="p-3 font-semibold text-slate-200">${DAYS_MAP[dayKey]}</th>`;
+            });
+            headerRow.innerHTML = headerHtml;
+
             const tbody = document.getElementById('timetableGrid');
             tbody.innerHTML = '';
 
-            for (let p = 1; p <= 7; p++) {
+            for (let p = 1; p <= maxTimetablePeriods; p++) {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-white/5 hover:bg-white/[0.01] transition';
 
                 let rowHtml = `<td class="p-2.5 font-mono text-slate-500 bg-white/[0.01] font-bold">${p}</td>`;
 
-                DAYS_KEYS.forEach(dayKey => {
+                activeDays.forEach(dayKey => {
                     const cellData = timetable[dayKey][p - 1] || { subject: '' };
                     const name = cellData.subject;
 
@@ -1536,7 +1703,7 @@
                 nameInput.value = '';
             }
 
-            document.getElementById('modalPeriodBadge').textContent = `${DAYS_MAP[dayKey]} ${periodIndex + 1}限`;
+            document.getElementById('modalPeriodBadge').textContent = `${DAYS_MAP_LONG[dayKey]} ${periodIndex + 1}限`;
             document.getElementById('editModal').classList.remove('hidden');
         };
 
@@ -1592,6 +1759,7 @@
                 document.getElementById('editModal').classList.add('hidden');
             });
 
+            // 決定ボタンで時間割を保存
             document.getElementById('btnSaveEdit').addEventListener('click', () => {
                 const dayKey = document.getElementById('editDay').value;
                 const periodIndex = parseInt(document.getElementById('editPeriod').value);
@@ -1611,6 +1779,11 @@
                     }
                 }
 
+                if (!timetable[dayKey]) timetable[dayKey] = Array(maxTimetablePeriods).fill({ subject: '' });
+                while (timetable[dayKey].length <= periodIndex) {
+                    timetable[dayKey].push({ subject: '' });
+                }
+
                 timetable[dayKey][periodIndex] = { subject: name };
                 saveUserData();
 
@@ -1618,7 +1791,25 @@
                 renderTimetableGrid();
                 renderTodayTab();
                 renderStatsTab();
-                showToast('時間割を保存しました', 'emerald');
+                showToast('時間割を決定・保存しました', 'emerald');
+            });
+
+            document.getElementById('btnToggleWeekend').addEventListener('click', () => {
+                showWeekend = !showWeekend;
+                saveUserData();
+                renderTimetableGrid();
+                showToast(showWeekend ? '土日を表示しました' : '土日を非表示にしました', 'emerald');
+            });
+
+            document.getElementById('btnAddPeriod').addEventListener('click', () => {
+                if (maxTimetablePeriods < 12) {
+                    maxTimetablePeriods++;
+                    saveUserData();
+                    renderTimetableGrid();
+                    showToast(`最大時限数を ${maxTimetablePeriods}限 に拡張しました`, 'emerald');
+                } else {
+                    alert('これ以上拡張できません。');
+                }
             });
 
             document.getElementById('selectOverrideMasterSubject').addEventListener('change', (e) => {
@@ -1673,14 +1864,14 @@
             });
 
             document.getElementById('btnConfirmAbsentAll').addEventListener('click', () => {
-                showConfirmModal('全休の一括記録', '本日のすべての授業を欠席として記録しますか？', () => {
+                showConfirmModal('全休の一括記録', '本日のすべての授業を全休として記録しますか？', () => {
                     if (!records[currentTargetDate]) {
                         records[currentTargetDate] = { overrideDay: 'auto', absences: [] };
                     }
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
-                    let daySubjects = timetable[activeDayKey] || [];
+                    let daySubjects = (timetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
                     
                     if (activeDayKey === 'short') {
                         const maxP = parseInt(document.getElementById('selectShortMaxPeriod').value) || 4;
@@ -1762,14 +1953,14 @@
                 const startP = parseInt(document.getElementById('modalLateSelect').value);
                 lateModal.classList.add('hidden');
 
-                showConfirmModal('遅刻の記録確認', `${startP}限目からの出席として記録しますか？`, () => {
+                showConfirmModal('遅刻の記録確認', `${startP === 1 ? '1限から出席（遅刻）' : startP + '限目からの出席'}として記録しますか？`, () => {
                     if (!records[currentTargetDate]) {
                         records[currentTargetDate] = { overrideDay: 'auto', absences: [] };
                     }
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
-                    let daySubjects = timetable[activeDayKey] || [];
+                    let daySubjects = (timetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
                     if (activeDayKey === 'short') {
                         const maxP = parseInt(document.getElementById('selectShortMaxPeriod').value) || 4;
                         daySubjects = (timetable[getDayKeyByDate(currentTargetDate)] || []).slice(0, maxP);
@@ -1779,9 +1970,10 @@
                     const todayOverrides = daySubjectOverrides[currentTargetDate] || {};
 
                     if (activeDayKey === 'none' || daySubjects.length === 0 || daySubjects.every((s, idx) => !s.subject && !todayOverrides[idx + 1])) {
-                        currentAbs.push({ period: 0, subject: `遅刻 (${startP}限から出席)`, note: '遅刻' });
+                        currentAbs.push({ period: 0, subject: `遅刻 (${startP === 1 ? '1限から出席' : startP + '限から出席'})`, note: '遅刻' });
                     } else {
-                        for (let p = 1; p < startP; p++) {
+                        const loopLimit = startP === 1 ? 0 : startP - 1;
+                        for (let p = 1; p <= loopLimit; p++) {
                             const subj = todayOverrides[p] !== undefined ? todayOverrides[p] : (daySubjects[p - 1] ? daySubjects[p - 1].subject : '');
                             if (subj) {
                                 currentAbs.push({ period: p, subject: subj, note: '遅刻' });
@@ -1794,7 +1986,7 @@
                     renderTodayTab();
                     renderCalendarTab();
                     renderStatsTab();
-                    showToast(`${startP}限からの遅刻を反映しました`, 'amber');
+                    showToast('遅刻を反映しました', 'amber');
                 });
             });
 
@@ -1809,14 +2001,14 @@
                 const earlyP = parseInt(document.getElementById('modalEarlySelect').value);
                 earlyModal.classList.add('hidden');
 
-                showConfirmModal('早退の記録確認', `${earlyP}限目からの早退として記録しますか？`, () => {
+                showConfirmModal('早退の記録確認', `${earlyP === 1 ? '1限から早退' : earlyP + '限目からの早退'}として記録しますか？`, () => {
                     if (!records[currentTargetDate]) {
                         records[currentTargetDate] = { overrideDay: 'auto', absences: [] };
                     }
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
-                    let daySubjects = timetable[activeDayKey] || [];
+                    let daySubjects = (timetable[activeDayKey] || []).slice(0, maxTimetablePeriods);
                     if (activeDayKey === 'short') {
                         const maxP = parseInt(document.getElementById('selectShortMaxPeriod').value) || 4;
                         daySubjects = (timetable[getDayKeyByDate(currentTargetDate)] || []).slice(0, maxP);
@@ -1828,7 +2020,8 @@
                     if (activeDayKey === 'none' || daySubjects.length === 0 || daySubjects.every((s, idx) => !s.subject && !todayOverrides[idx + 1])) {
                         currentAbs.push({ period: 0, subject: `早退 (${earlyP}限から早退)`, note: '早退' });
                     } else {
-                        for (let p = earlyP; p <= 7; p++) {
+                        const loopStart = earlyP === 1 ? 1 : earlyP;
+                        for (let p = loopStart; p <= daySubjects.length; p++) {
                             const subj = todayOverrides[p] !== undefined ? todayOverrides[p] : (daySubjects[p - 1] ? daySubjects[p - 1].subject : '');
                             if (subj) {
                                 currentAbs.push({ period: p, subject: subj, note: '早退' });
@@ -1841,7 +2034,7 @@
                     renderTodayTab();
                     renderCalendarTab();
                     renderStatsTab();
-                    showToast(`${earlyP}限からの早退を反映しました`, 'amber');
+                    showToast('早退を反映しました', 'amber');
                 });
             });
 
@@ -1881,13 +2074,29 @@
                 renderCalendarTab();
             });
 
+            // カレンダー・集計画面からの直接記録モーダル
+            const addAbsenceModal = document.getElementById('addAbsenceModal');
+            
             document.getElementById('btnOpenAddAbsenceModal').addEventListener('click', () => {
                 if (!selectedCalendarDate) return;
+                document.getElementById('inputAddAbsenceDate').value = selectedCalendarDate;
+                document.getElementById('addAbsenceDateContainer').classList.remove('hidden');
                 
                 const select = document.getElementById('addAbsenceSubjectSelect');
                 populateSubjectDropdown(select);
 
-                document.getElementById('addAbsenceModalTitle').textContent = `${selectedCalendarDate} 欠席記録追加`;
+                document.getElementById('addAbsenceModalTitle').textContent = `${selectedCalendarDate} カレンダー記録追加`;
+                document.getElementById('addAbsenceModal').classList.remove('hidden');
+            });
+
+            document.getElementById('btnOpenUndatedAbsenceModal').addEventListener('click', () => {
+                document.getElementById('inputAddAbsenceDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('addAbsenceDateContainer').classList.remove('hidden');
+                
+                const select = document.getElementById('addAbsenceSubjectSelect');
+                populateSubjectDropdown(select);
+
+                document.getElementById('addAbsenceModalTitle').textContent = '授業欠席の直接記録';
                 document.getElementById('addAbsenceModal').classList.remove('hidden');
             });
 
@@ -1905,6 +2114,12 @@
             });
 
             document.getElementById('btnSaveAddAbsence').addEventListener('click', () => {
+                const targetDate = document.getElementById('inputAddAbsenceDate').value;
+                if (!targetDate) {
+                    alert('日付を指定してください。');
+                    return;
+                }
+
                 const selVal = document.getElementById('addAbsenceSubjectSelect').value;
                 if (!selVal || selVal === '') {
                     alert('有効な科目を選択してください。');
@@ -1920,12 +2135,25 @@
                     }
                 }
                 const period = parseInt(document.getElementById('addAbsencePeriodSelect').value);
-                const note = document.getElementById('addAbsenceNote').value.trim();
+                const noteType = document.getElementById('addAbsenceTypeSelect').value;
 
-                toggleSingleAbsence(selectedCalendarDate, period, subjName, note);
+                if (!records[targetDate]) {
+                    records[targetDate] = { overrideDay: 'auto', absences: [] };
+                }
+                if (!records[targetDate].absences) {
+                    records[targetDate].absences = [];
+                }
 
+                // すでに同じ時限に記録がある場合は上書きまたは追加
+                records[targetDate].absences = records[targetDate].absences.filter(a => a.period !== period);
+                records[targetDate].absences.push({ period, subject: subjName, note: noteType });
+
+                saveUserData();
                 document.getElementById('addAbsenceModal').classList.add('hidden');
                 renderCalendarTab();
+                renderStatsTab();
+                renderTodayTab();
+                showToast('記録を保存しました', 'emerald');
             });
 
             document.getElementById('btnResetTimetable').addEventListener('click', () => {
