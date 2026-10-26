@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+  <!-- 認証前のコンテナ（ログイン・アカウント作成・メール認証） -->
+  <div id="auth-container" class="container">
     <header class="app-header">
       <h1>ATTENDANCE MANAGEMENT</h1>
     </header>
@@ -17,7 +18,6 @@
       <h2 class="title-blue">ログイン</h2>
       <p class="sub-text">メールアドレスおよびパスワードを入力してください。</p>
 
-      <!-- エラーメッセージ表示エリア -->
       <div id="login-error-msg" class="error-banner hidden"></div>
 
       <form id="login-form">
@@ -93,7 +93,7 @@
       <button type="button" class="btn btn-primary js-back-to-login">ログイン画面に戻る</button>
     </div>
 
-    <!-- 準備中画面 -->
+    <!-- 準備中画面（認証前リンク用） -->
     <div id="not-ready-card" class="card hidden">
       <h2 class="title-blue">準備中。</h2>
       <p class="sub-text">この機能は現在準備中です。今しばらくお待ちください。</p>
@@ -106,6 +106,142 @@
       <a href="#" class="blue-link js-not-ready">利用規約</a>
       <a href="#" class="blue-link js-not-ready">会員規約</a>
     </footer>
+  </div>
+
+  <!-- ログイン後のメイン画面 -->
+  <div id="main-app" class="main-layout hidden">
+    <!-- 上部ヘッダー（薄めの青背景） -->
+    <header class="main-header">
+      <div class="header-left">
+        <span class="version-text">ver1.1.1</span>
+        <span class="main-header-title">ATTENDANCE MANAGEMENT</span>
+      </div>
+      <div class="main-header-icons">
+        <!-- お知らせ（ベル） -->
+        <button type="button" id="notices-btn" class="icon-btn" title="お知らせ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+        </button>
+        <!-- 設定（歯車） -->
+        <button type="button" id="settings-btn" class="icon-btn" title="設定">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0l2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <!-- ログアウト（出口アイコン） -->
+        <button type="button" id="header-logout-btn" class="icon-btn" title="ログアウト">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ホーム画面 -->
+    <main id="home-view" class="main-content">
+      <div class="center-card">
+        <h2 class="title-blue">準備中。</h2>
+        <p class="sub-text">ホーム画面は現在準備中です。</p>
+        <button type="button" id="logout-btn" class="btn btn-outline" style="margin-top: 20px;">ログアウト</button>
+      </div>
+    </main>
+
+    <!-- 欠席記録画面 -->
+    <main id="absence-view" class="main-content hidden">
+      <div class="center-card">
+        <h2 class="title-blue">準備中。</h2>
+        <p class="sub-text" style="margin-bottom: 0;">欠席記録画面は現在準備中です。</p>
+      </div>
+    </main>
+
+    <!-- 記録状況画面 -->
+    <main id="status-view" class="main-content hidden">
+      <div class="center-card">
+        <h2 class="title-blue">準備中。</h2>
+        <p class="sub-text" style="margin-bottom: 0;">記録状況画面は現在準備中です。</p>
+      </div>
+    </main>
+
+    <!-- カレンダー画面 -->
+    <main id="calendar-view" class="main-content hidden">
+      <div class="center-card">
+        <h2 class="title-blue">準備中。</h2>
+        <p class="sub-text" style="margin-bottom: 0;">カレンダー画面は現在準備中です。</p>
+      </div>
+    </main>
+
+    <!-- 時間割画面 -->
+    <main id="timetable-view" class="main-content hidden">
+      <div class="center-card">
+        <h2 class="title-blue">準備中。</h2>
+        <p class="sub-text" style="margin-bottom: 0;">時間割画面は現在準備中です。</p>
+      </div>
+    </main>
+
+    <!-- お知らせ画面 -->
+    <main id="notices-view" class="main-content hidden">
+      <div class="center-card">
+        <h2 class="title-blue">お知らせ</h2>
+        <p class="sub-text" style="margin-top: 12px; margin-bottom: 0;">ただいまお知らせはありません。</p>
+      </div>
+    </main>
+
+    <!-- 設定画面（インデックス項目ごとに表示切り替え） -->
+    <main id="settings-view" class="main-content hidden">
+      <div class="settings-container">
+        <div class="settings-header">
+          <h2 class="title-blue" style="margin-bottom: 0;">設定</h2>
+        </div>
+        
+        <div class="settings-body">
+          <aside class="settings-sidebar">
+            <ul class="settings-menu">
+              <li><button type="button" data-title="アカウント設定" class="settings-menu-item active js-settings-item">アカウント設定</button></li>
+              <li><button type="button" data-title="通知設定" class="settings-menu-item js-settings-item">通知設定</button></li>
+              <li><button type="button" data-title="勤怠・打刻設定" class="settings-menu-item js-settings-item">勤怠・打刻設定</button></li>
+              <li><button type="button" data-title="セキュリティ設定" class="settings-menu-item js-settings-item">セキュリティ</button></li>
+              <li><button type="button" data-title="ヘルプ & サポート" class="settings-menu-item js-settings-item">ヘルプ & サポート</button></li>
+            </ul>
+          </aside>
+
+          <section class="settings-content">
+            <div class="settings-card">
+              <h3 id="settings-content-title" class="title-blue" style="font-size: 1.4rem;">アカウント設定</h3>
+              <p id="settings-content-desc" class="sub-text" style="margin-bottom: 0;">アカウント設定は現在準備中です。</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- 下部インデックスバー -->
+    <nav class="index-bar">
+      <button type="button" id="tab-home" class="index-tab active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        <span>ホーム</span>
+      </button>
+      <button type="button" id="tab-absence" class="index-tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>
+        <span>欠席記録</span>
+      </button>
+      <button type="button" id="tab-status" class="index-tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span>記録状況</span>
+      </button>
+      <button type="button" id="tab-calendar" class="index-tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span>カレンダー</span>
+      </button>
+      <button type="button" id="tab-timetable" class="index-tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect><line x1="2" y1="9" x2="22" y2="9"></line><line x1="2" y1="15" x2="22" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+        <span>時間割</span>
+      </button>
+    </nav>
   </div>
 
   <script type="module" src="app.js"></script>

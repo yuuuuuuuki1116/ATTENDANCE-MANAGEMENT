@@ -5,7 +5,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   sendEmailVerification,
-  signOut
+  signOut,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 // Firebase設定
@@ -24,10 +25,22 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // DOM要素の取得
+const authContainer = document.getElementById('auth-container');
+const mainApp = document.getElementById('main-app');
+
 const loginCard = document.getElementById('login-card');
 const registerCard = document.getElementById('register-card');
 const verifyCard = document.getElementById('verify-card');
 const notReadyCard = document.getElementById('not-ready-card');
+
+// メインビュー
+const homeView = document.getElementById('home-view');
+const absenceView = document.getElementById('absence-view');
+const statusView = document.getElementById('status-view');
+const calendarView = document.getElementById('calendar-view');
+const timetableView = document.getElementById('timetable-view');
+const noticesView = document.getElementById('notices-view');
+const settingsView = document.getElementById('settings-view');
 
 const loginErrorMsg = document.getElementById('login-error-msg');
 const registerErrorMsg = document.getElementById('register-error-msg');
@@ -37,8 +50,20 @@ const showLoginLink = document.getElementById('show-login-link');
 
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
+const logoutBtn = document.getElementById('logout-btn');
+const headerLogoutBtn = document.getElementById('header-logout-btn');
 
-// 画面切り替え関数
+// ヘッダー・タスクバーのボタン
+const settingsBtn = document.getElementById('settings-btn');
+const noticesBtn = document.getElementById('notices-btn');
+
+const tabHome = document.getElementById('tab-home');
+const tabAbsence = document.getElementById('tab-absence');
+const tabStatus = document.getElementById('tab-status');
+const tabCalendar = document.getElementById('tab-calendar');
+const tabTimetable = document.getElementById('tab-timetable');
+
+// 画面切り替え関数（認証前）
 function showCard(cardToShow) {
   loginCard.classList.add('hidden');
   registerCard.classList.add('hidden');
@@ -51,7 +76,109 @@ function showCard(cardToShow) {
   cardToShow.classList.remove('hidden');
 }
 
-// 画面遷移イベント
+// 認証状態の監視
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await user.reload();
+    if (user.emailVerified) {
+      authContainer.classList.add('hidden');
+      mainApp.classList.remove('hidden');
+      showMainView('home');
+    } else {
+      await signOut(auth);
+      mainApp.classList.add('hidden');
+      authContainer.classList.remove('hidden');
+      showCard(loginCard);
+    }
+  } else {
+    mainApp.classList.add('hidden');
+    authContainer.classList.remove('hidden');
+    showCard(loginCard);
+  }
+});
+
+// メインアプリ内のビュー切り替え
+function showMainView(viewName) {
+  homeView.classList.add('hidden');
+  absenceView.classList.add('hidden');
+  statusView.classList.add('hidden');
+  calendarView.classList.add('hidden');
+  timetableView.classList.add('hidden');
+  noticesView.classList.add('hidden');
+  settingsView.classList.add('hidden');
+
+  settingsBtn.classList.remove('active');
+  noticesBtn.classList.remove('active');
+
+  tabHome.classList.remove('active');
+  tabAbsence.classList.remove('active');
+  tabStatus.classList.remove('active');
+  tabCalendar.classList.remove('active');
+  tabTimetable.classList.remove('active');
+
+  if (viewName === 'home') {
+    homeView.classList.remove('hidden');
+    tabHome.classList.add('active');
+  } else if (viewName === 'absence') {
+    absenceView.classList.remove('hidden');
+    tabAbsence.classList.add('active');
+  } else if (viewName === 'status') {
+    statusView.classList.remove('hidden');
+    tabStatus.classList.add('active');
+  } else if (viewName === 'calendar') {
+    calendarView.classList.remove('hidden');
+    tabCalendar.classList.add('active');
+  } else if (viewName === 'timetable') {
+    timetableView.classList.remove('hidden');
+    tabTimetable.classList.add('active');
+  } else if (viewName === 'notices') {
+    noticesView.classList.remove('hidden');
+    noticesBtn.classList.add('active');
+  } else if (viewName === 'settings') {
+    settingsView.classList.remove('hidden');
+    settingsBtn.classList.add('active');
+  }
+}
+
+// イベントリスナー設定
+tabHome.addEventListener('click', () => showMainView('home'));
+tabAbsence.addEventListener('click', () => showMainView('absence'));
+tabStatus.addEventListener('click', () => showMainView('status'));
+tabCalendar.addEventListener('click', () => showMainView('calendar'));
+tabTimetable.addEventListener('click', () => showMainView('timetable'));
+
+noticesBtn.addEventListener('click', () => showMainView('notices'));
+settingsBtn.addEventListener('click', () => showMainView('settings'));
+
+const handleLogout = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("ログアウトエラー:", error);
+  }
+};
+
+logoutBtn.addEventListener('click', handleLogout);
+headerLogoutBtn.addEventListener('click', handleLogout);
+
+// 設定インデックス（左側メニュー）の各項目切り替え処理
+document.querySelectorAll('.js-settings-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    document.querySelectorAll('.js-settings-item').forEach(el => el.classList.remove('active'));
+    e.target.classList.add('active');
+    
+    const titleText = e.target.getAttribute('data-title');
+    const titleElem = document.getElementById('settings-content-title');
+    const descElem = document.getElementById('settings-content-desc');
+
+    if (titleElem && descElem) {
+      titleElem.textContent = titleText;
+      descElem.textContent = `${titleText}は現在準備中です。`;
+    }
+  });
+});
+
+// 認証前リンク
 showRegisterLink.addEventListener('click', (e) => {
   e.preventDefault();
   showCard(registerCard);
@@ -110,9 +237,6 @@ loginForm.addEventListener('submit', async (e) => {
       loginErrorMsg.classList.remove('hidden');
       return;
     }
-
-    alert(`ログインに成功しました！ ようこそ ${user.email} さん`);
-
   } catch (error) {
     console.error("ログインエラー:", error);
     loginErrorMsg.textContent = "メールアドレスかパスワードが正しくないか、アカウントが無効になっています。";
@@ -137,17 +261,10 @@ registerForm.addEventListener('submit', async (e) => {
   }
 
   try {
-    // 1. Firebase Authにユーザー作成
-    console.log("ユーザー作成中...");
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 2. 認証メールの送信
-    console.log("認証メールを送信中...");
     await sendEmailVerification(user);
-
-    // 3. サインアウトして確認画面へ切り替え
-    console.log("サインアウトして確認画面に切り替えます");
     await signOut(auth);
     showCard(verifyCard);
 
@@ -159,8 +276,6 @@ registerForm.addEventListener('submit', async (e) => {
       errorMessage = "このメールアドレスは既に登録されています。";
     } else if (error.code === 'auth/weak-password') {
       errorMessage = "パスワードは6文字以上で指定してください。";
-    } else if (error.code === 'auth/operation-not-allowed') {
-      errorMessage = "Firebase Consoleでメール/パスワード認証が有効になっていません。";
     }
     
     registerErrorMsg.textContent = errorMessage;
