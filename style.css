@@ -61,7 +61,7 @@ body {
   margin-bottom: 24px;
 }
 
-/* エラーメッセージバナー（薄い赤背景に赤文字） */
+/* エラーメッセージバナー */
 .error-banner {
   background-color: #fde8e8;
   color: #e53e3e;
@@ -87,30 +87,10 @@ body {
   font-weight: 500;
 }
 
-.password-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.password-wrapper input {
-  width: 100%;
-  padding-right: 60px;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 10px;
-  background: none;
-  border: none;
-  color: #666;
-  font-size: 0.8rem;
-  cursor: pointer;
-  padding: 4px;
-}
-
+/* すべての入力欄（メールアドレス、パスワード）の共通基本スタイル */
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="text"] {
   width: 100%;
   padding: 12px;
   border: 1px solid #cccccc;
@@ -122,9 +102,41 @@ input[type="password"] {
   color: #333333;
 }
 
-/* 入力時（フォーカス時）の青枠 */
+/* パスワード入力欄のレイアウト */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* パスワード欄は右側の「表示」ボタンと重ならないように右余白を確保 */
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+  padding-right: 65px;
+}
+
+/* 表示・非表示切り替えボタンの位置固定 */
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  z-index: 2;
+}
+
+.toggle-password:hover {
+  color: #0066cc;
+}
+
+/* フォーカス時の青枠 */
 input[type="email"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+input[type="text"]:focus {
   border-color: #0066cc;
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
 }
