@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欠席管理 - Attendance Tracker Pro (Secure Auth & Guide)</title>
+    <title>欠席管理 - Attendance Tracker Pro (Firebase Auth)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -76,7 +76,7 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-sm tracking-widest text-white uppercase">ATTENDANCE MANAGEMENT</h1>
-                    <p class="text-[10px] text-slate-400 tracking-wider">授業欠席・単位管理システム</p>
+                    <p class="text-[10px] text-slate-400 tracking-wider">授業欠席・単位管理システム (Firebase Auth)</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -334,7 +334,7 @@
 
     </main>
 
-    <!-- Modal: Login / Register System -->
+    <!-- Modal: Login / Register System (Firebase Auth) -->
     <div id="authModal" class="fixed inset-0 bg-noir-950/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5 border border-white/10">
             
@@ -346,26 +346,25 @@
 
             <div class="text-center">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto text-xl shadow-inner mb-2">
-                    <i id="authIcon" class="fa-solid fa-right-to-bracket"></i>
+                    <i id="authIcon" class="fa-solid fa-envelope-circle-check"></i>
                 </div>
-                <h3 id="authTitle" class="font-bold text-base text-white">アカウント ログイン</h3>
-                <p id="authDesc" class="text-xs text-slate-400 mt-0.5">登録したIDとパスワードを入力してください</p>
+                <h3 id="authTitle" class="font-bold text-base text-white">Firebase 認証ログイン</h3>
+                <p id="authDesc" class="text-xs text-slate-400 mt-0.5">メールアドレスとパスワードで安全にログイン</p>
             </div>
             
             <div class="space-y-3 text-xs">
                 <div>
-                    <label class="block font-medium text-slate-400 mb-1">ユーザーID (6文字以上 / 英小文字,数字,-,_,@)</label>
-                    <input type="text" id="authUserId" placeholder="例: student_01" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50 lowercase">
+                    <label class="block font-medium text-slate-400 mb-1">メールアドレス</label>
+                    <input type="email" id="authEmail" placeholder="example@domain.com" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
                 </div>
                 <div>
                     <label class="block font-medium text-slate-400 mb-1">パスワード (6文字以上)</label>
-                    <input type="password" id="authPassword" placeholder="英大文字・小文字・数字・記号(-_#)のうち3種以上" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
+                    <input type="password" id="authPassword" placeholder="パスワードを入力" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
                 </div>
                 <div id="registerRules" class="hidden p-3 bg-indigo-950/30 border border-indigo-500/20 rounded-xl text-[11px] text-indigo-200 space-y-1">
-                    <p class="font-bold mb-1">📌 新規作成ルール:</p>
-                    <p>• ID: 6文字以上 (半角英小文字、数字、-、_、@)</p>
-                    <p>• パスワード: 6文字以上、IDと異なる文字列</p>
-                    <p>• パスワード条件: 「英大文字」「英小文字」「数字」「記号(-_#)」から<span class="font-bold text-amber-300">3種類以上</span>使用</p>
+                    <p class="font-bold mb-1">📌 ご案内:</p>
+                    <p>• 新規登録時、本物の確認メールが送信されます。</p>
+                    <p>• メール内のリンクをクリックして認証を完了させてください。</p>
                 </div>
             </div>
 
@@ -390,15 +389,11 @@
             <div class="space-y-4 overflow-y-auto no-scrollbar text-xs text-slate-300 pr-1">
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
                     <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-user-lock"></i> 1. アカウントとログインについて
+                        <i class="fa-solid fa-envelope"></i> 1. Firebaseメール認証について
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        本アプリでは、ユーザーIDとパスワードでアカウントを保護しています。端末が変わっても同じIDでログインすれば、データが自動で呼び出されます。
+                        本アプリはFirebase Authenticationを使用しています。新規登録を行うとご登録のメールアドレスに確認メールが届きます。
                     </p>
-                    <div class="text-[11px] text-slate-400 space-y-0.5 pt-1">
-                        <p>• <strong class="text-slate-300">ユーザーID:</strong> 6文字以上（英小文字、数字、-、_、@ のみ）</p>
-                        <p>• <strong class="text-slate-300">パスワード:</strong> 6文字以上（英大文字、英小文字、数字、記号[-_#]のうち3種類以上を使用。IDと同じものは不可）</p>
-                    </div>
                 </div>
 
                 <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
@@ -406,7 +401,7 @@
                         <i class="fa-solid fa-table-cells"></i> 2. 時間割と科目の登録
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        最初に「設定」タブの「履修科目登録」から受講する科目を追加してください。その後、「時間割」タブで各曜日の1〜7限に科目を割り当てます。
+                        最初に「設定」タブの「履修科目登録」から受講する科目を追加し、「時間割」タブで各曜日の1〜7限に割り当てます。
                     </p>
                 </div>
 
@@ -415,16 +410,7 @@
                         <i class="fa-solid fa-clock-rotate-left"></i> 3. 欠席・遅刻・早退の記録
                     </h4>
                     <p class="text-slate-400 leading-relaxed">
-                        「本日の授業」タブでは、ワンタップで欠席切り替えが行えるほか、「全休」「遅刻」「早退」の一括処理も可能です。カレンダータブからも過去の日付の追加・削除やメモ編集が行えます。行事日や授業なしの日も、ステータスとしてカレンダーに残せます。
-                    </p>
-                </div>
-
-                <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
-                    <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
-                        <i class="fa-solid fa-chart-simple"></i> 4. 単位管理・注意アラート
-                    </h4>
-                    <p class="text-slate-400 leading-relaxed">
-                        「集計状況」タブで教科ごとの欠席回数や残り許容回数がひと目でわかります。「設定」タブの注意・警告設定から、科目ごとの上限回数を自由に変更できます。
+                        「本日の授業」タブやカレンダータブから、欠席・遅刻・早退や行事日の記録が行えます。
                     </p>
                 </div>
             </div>
@@ -674,8 +660,24 @@
         </div>
     </nav>
 
-    <!-- App JavaScript Script -->
-    <script>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_kzDP_DY8ANsvJygrsy-arFwy_qCxmNU",
+            authDomain: "attendance-management-a9c4c.firebaseapp.com",
+            projectId: "attendance-management-a9c4c",
+            storageBucket: "attendance-management-a9c4c.firebasestorage.app",
+            messagingSenderId: "795963088777",
+            appId: "1:795963088777:web:f539c8bc17246afe514b58",
+            measurementId: "G-FX1C82L7LZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
         const EMPTY_TIMETABLE = {
             mon: Array(7).fill({ subject: '' }),
             tue: Array(7).fill({ subject: '' }),
@@ -684,8 +686,7 @@
             fri: Array(7).fill({ subject: '' })
         };
 
-        let currentUserId = localStorage.getItem('att_current_user') || null;
-
+        let currentUserId = null;
         let masterSubjects = [];
         let timetable = JSON.parse(JSON.stringify(EMPTY_TIMETABLE));
         let records = {};
@@ -725,7 +726,7 @@
 
         function initAuthSystem() {
             const authModal = document.getElementById('authModal');
-            const userIdInput = document.getElementById('authUserId');
+            const emailInput = document.getElementById('authEmail');
             const passInput = document.getElementById('authPassword');
             const btnSubmit = document.getElementById('btnAuthSubmit');
             const btnLogout = document.getElementById('btnLogout');
@@ -733,24 +734,26 @@
             const tabRegister = document.getElementById('tabRegisterMode');
             const authTitle = document.getElementById('authTitle');
             const authDesc = document.getElementById('authDesc');
-            const authIcon = document.getElementById('authIcon');
             const registerRules = document.getElementById('registerRules');
 
-            if (currentUserId) {
-                authModal.classList.add('hidden');
-                loadUserData(currentUserId);
-                startApp();
-            } else {
-                authModal.classList.remove('hidden');
-            }
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    document.getElementById('currentLoginUserLabel').textContent = user.email;
+                    authModal.classList.add('hidden');
+                    loadUserData(currentUserId);
+                    startApp();
+                } else {
+                    authModal.classList.remove('hidden');
+                }
+            });
 
             tabLogin.addEventListener('click', () => {
                 authMode = 'login';
                 tabLogin.className = 'flex-1 py-2 rounded-lg bg-indigo-500 text-white transition';
                 tabRegister.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
-                authTitle.textContent = 'アカウント ログイン';
-                authDesc.textContent = '登録したIDとパスワードを入力してください';
-                authIcon.className = 'fa-solid fa-right-to-bracket';
+                authTitle.textContent = 'Firebase 認証ログイン';
+                authDesc.textContent = 'メールアドレスとパスワードで安全にログイン';
                 btnSubmit.textContent = 'ログイン';
                 registerRules.classList.add('hidden');
             });
@@ -759,84 +762,39 @@
                 authMode = 'register';
                 tabRegister.className = 'flex-1 py-2 rounded-lg bg-indigo-500 text-white transition';
                 tabLogin.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
-                authTitle.textContent = '新規アカウント作成';
-                authDesc.textContent = 'あなた専用のIDとパスワードを設定してください';
-                authIcon.className = 'fa-solid fa-user-plus';
-                btnSubmit.textContent = 'アカウントを作成して開始';
+                authTitle.textContent = '新規アカウント作成 (確認メール送信)';
+                authDesc.textContent = '登録したメールアドレスに確認メールが送信されます';
+                btnSubmit.textContent = 'アカウントを作成して確認メールを送信';
                 registerRules.classList.remove('hidden');
             });
 
-            btnSubmit.addEventListener('click', () => {
-                const userId = userIdInput.value.trim().toLowerCase();
-                const pass = passInput.value.trim();
+            btnSubmit.addEventListener('click', async () => {
+                const email = emailInput.value.trim();
+                const password = passInput.value.trim();
 
-                const userIdRegex = /^[a-z0-9\-_@]{6,}$/;
-                if (!userIdRegex.test(userId)) {
-                    alert('ユーザーIDは6文字以上で、半角英小文字、数字、-、_、@ のみ使用できます。');
+                if (!email || !password) {
+                    alert('メールアドレスとパスワードを入力してください。');
                     return;
                 }
 
-                const passCharsRegex = /^[A-Za-z0-9\-_#]{6,}$/;
-                if (!passCharsRegex.test(pass)) {
-                    alert('パスワードは6文字以上で、英大文字、英小文字、数字、ハイフン(-)、アンダースコア(_)、シャープ(#)のみ使用できます。');
-                    return;
-                }
-
-                if (pass === userId) {
-                    alert('パスワードをユーザーIDと全く同じにすることはできません。');
-                    return;
-                }
-
-                let charTypesCount = 0;
-                if (/[A-Z]/.test(pass)) charTypesCount++;
-                if (/[a-z]/.test(pass)) charTypesCount++;
-                if (/[0-9]/.test(pass)) charTypesCount++;
-                if (/[\-_#]/.test(pass)) charTypesCount++;
-
-                if (charTypesCount < 3) {
-                    alert('パスワードは「英大文字」「英小文字」「数字」「記号(-_#)」の中から3種類以上を使用してください。');
-                    return;
-                }
-
-                const usersDb = JSON.parse(localStorage.getItem('att_all_users_db')) || {};
-
-                if (authMode === 'register') {
-                    if (usersDb[userId]) {
-                        alert('このユーザーIDは既に他の人に使用されています。別のIDを指定してください。');
-                        return;
+                try {
+                    if (authMode === 'register') {
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        await sendEmailVerification(userCredential.user);
+                        alert('確認メールを送信しました！メール内のリンクをクリックして認証を完了させてください。');
+                        signOut(auth);
+                    } else {
+                        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                        showToast('ログインしました', 'emerald');
                     }
-                    usersDb[userId] = pass;
-                    localStorage.setItem('att_all_users_db', JSON.stringify(usersDb));
-
-                    currentUserId = userId;
-                    localStorage.setItem('att_current_user', currentUserId);
-                    authModal.classList.add('hidden');
-                    loadUserData(currentUserId);
-                    startApp();
-                    showToast('アカウントを作成しました！', 'emerald');
-
-                } else {
-                    if (!usersDb[userId]) {
-                        alert('このユーザーIDは登録されていません。「新規アカウント作成」タブから登録してください。');
-                        return;
-                    }
-                    if (usersDb[userId] !== pass) {
-                        alert('パスワードが間違っています。');
-                        return;
-                    }
-
-                    currentUserId = userId;
-                    localStorage.setItem('att_current_user', currentUserId);
-                    authModal.classList.add('hidden');
-                    loadUserData(currentUserId);
-                    startApp();
-                    showToast('ログインしました', 'emerald');
+                } catch (error) {
+                    alert('エラー: ' + error.message);
                 }
             });
 
-            btnLogout.addEventListener('click', () => {
+            btnLogout.addEventListener('click', async () => {
                 if (confirm('ログアウトしますか？')) {
-                    localStorage.removeItem('att_current_user');
+                    await signOut(auth);
                     location.reload();
                 }
             });
@@ -851,8 +809,6 @@
             subjectWarnMargin = JSON.parse(localStorage.getItem(prefix + 'subject_warn_margin')) || {};
             dayNotes = JSON.parse(localStorage.getItem(prefix + 'day_notes')) || {};
             daySubjectOverrides = JSON.parse(localStorage.getItem(prefix + 'day_subject_overrides')) || {};
-
-            document.getElementById('currentLoginUserLabel').textContent = userId;
         }
 
         function saveUserData() {
@@ -1232,7 +1188,6 @@
                 const item = document.createElement('div');
                 item.className = 'glass-panel-interactive p-3 rounded-xl flex items-center justify-between border border-white/5';
                 
-                // 行事等でコマがない場合の表示対応
                 const isSpecialStatus = (abs.period === 0);
                 item.innerHTML = `
                     <div>
@@ -1701,7 +1656,6 @@
                 showToast('教科を元に戻しました', 'emerald');
             });
 
-            // 全休 (行事等でコマがない場合はカレンダー記録のみ、通常の日は教科ごとに記録)
             document.getElementById('btnConfirmAbsentAll').addEventListener('click', () => {
                 showConfirmModal('全休の一括記録', '本日のすべての授業を欠席として記録しますか？', () => {
                     if (!records[currentTargetDate]) {
@@ -1721,7 +1675,6 @@
                     const todayOverrides = daySubjectOverrides[currentTargetDate] || {};
 
                     if (activeDayKey === 'none' || daySubjects.length === 0 || daySubjects.every((s, idx) => !s.subject && !todayOverrides[idx + 1])) {
-                        // 行事や授業なし等の場合：コマ単位ではなくカレンダーに「全休」ステータスのみ付与（統計非連動）
                         newAbsences.push({ period: 0, subject: '行事・終日行事 / 全休', note: '全休' });
                     } else {
                         daySubjects.forEach((subjObj, idx) => {
@@ -1782,7 +1735,6 @@
                 renderTodayTab();
             });
 
-            // 遅刻
             const lateModal = document.getElementById('lateModal');
             document.getElementById('btnOpenLateModal').addEventListener('click', () => {
                 lateModal.classList.remove('hidden');
@@ -1830,7 +1782,6 @@
                 });
             });
 
-            // 早退
             const earlyModal = document.getElementById('earlyModal');
             document.getElementById('btnOpenEarlyModal').addEventListener('click', () => {
                 earlyModal.classList.remove('hidden');
