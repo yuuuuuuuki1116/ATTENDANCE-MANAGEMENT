@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欠席管理 - Attendance Tracker Pro</title>
+    <title>欠席管理 - Attendance Tracker Pro (Secure Auth & Guide)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -75,12 +75,20 @@
                     <i class="fa-solid fa-cube text-xs"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-sm tracking-widest text-white uppercase">ATTENDANCE MANAGEMENT</h1>
+                    <h1 class="font-bold text-sm tracking-widest text-white uppercase">ATTENDANCE PRO</h1>
                     <p class="text-[10px] text-slate-400 tracking-wider">授業欠席・単位管理システム</p>
                 </div>
             </div>
-            <div id="liveClock" class="text-xs font-mono text-slate-400 bg-noir-950/50 px-2.5 py-1 rounded-full border border-white/5">
-                00:00:00
+            <div class="flex items-center gap-2">
+                <div id="liveClock" class="text-xs font-mono text-slate-400 bg-noir-950/50 px-2.5 py-1 rounded-full border border-white/5 hidden sm:block">
+                    00:00:00
+                </div>
+                <button id="btnOpenGuide" class="text-xs px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 rounded-lg border border-indigo-500/20 transition flex items-center gap-1.5" title="使い方ガイド">
+                    <i class="fa-solid fa-circle-question text-xs"></i> <span class="hidden sm:inline">使い方</span>
+                </button>
+                <button id="btnLogout" class="text-xs px-2.5 py-1 bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg border border-white/10 transition flex items-center gap-1.5" title="ログアウト">
+                    <i class="fa-solid fa-right-from-bracket text-[10px]"></i> <span id="currentLoginUserLabel" class="hidden sm:inline">アカウント</span>
+                </button>
             </div>
         </div>
     </header>
@@ -326,7 +334,108 @@
 
     </main>
 
-    <!-- Modal: Subject Detail (集計詳細確認用) -->
+    <!-- Modal: Login / Register System -->
+    <div id="authModal" class="fixed inset-0 bg-noir-950/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+        <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5 border border-white/10">
+            
+            <!-- 認証モード切り替えタブ -->
+            <div class="flex rounded-xl bg-noir-950 p-1 border border-white/10 text-xs font-bold text-center">
+                <button id="tabLoginMode" class="flex-1 py-2 rounded-lg bg-indigo-500 text-white transition">ログイン</button>
+                <button id="tabRegisterMode" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition">新規アカウント作成</button>
+            </div>
+
+            <div class="text-center">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto text-xl shadow-inner mb-2">
+                    <i id="authIcon" class="fa-solid fa-right-to-bracket"></i>
+                </div>
+                <h3 id="authTitle" class="font-bold text-base text-white">アカウント ログイン</h3>
+                <p id="authDesc" class="text-xs text-slate-400 mt-0.5">登録したIDとパスワードを入力してください</p>
+            </div>
+            
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-medium text-slate-400 mb-1">ユーザーID (6文字以上 / 英小文字,数字,-,_,@)</label>
+                    <input type="text" id="authUserId" placeholder="例: student_01" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50 lowercase">
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-400 mb-1">パスワード (6文字以上)</label>
+                    <input type="password" id="authPassword" placeholder="英大文字・小文字・数字・記号(-_#)のうち3種以上" class="w-full bg-noir-950 px-3.5 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-indigo-500/50">
+                </div>
+                <div id="registerRules" class="hidden p-3 bg-indigo-950/30 border border-indigo-500/20 rounded-xl text-[11px] text-indigo-200 space-y-1">
+                    <p class="font-bold mb-1">📌 新規作成ルール:</p>
+                    <p>• ID: 6文字以上 (半角英小文字、数字、-、_、@)</p>
+                    <p>• パスワード: 6文字以上、IDと異なる文字列</p>
+                    <p>• パスワード条件: 「英大文字」「英小文字」「数字」「記号(-_#)」から<span class="font-bold text-amber-300">3種類以上</span>使用</p>
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-2">
+                <button id="btnAuthSubmit" class="w-full py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold transition shadow-lg shadow-indigo-500/20">ログイン</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: App Guide / Help -->
+    <div id="guideModal" class="fixed inset-0 bg-noir-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 border border-white/10 max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-white/5 pb-3 shrink-0">
+                <h3 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question"></i> アプリの使い方ガイド
+                </h3>
+                <button id="btnCloseGuide" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4 overflow-y-auto no-scrollbar text-xs text-slate-300 pr-1">
+                <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
+                    <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
+                        <i class="fa-solid fa-user-lock"></i> 1. アカウントとログインについて
+                    </h4>
+                    <p class="text-slate-400 leading-relaxed">
+                        本アプリでは、ユーザーIDとパスワードでアカウントを保護しています。端末が変わっても同じIDでログインすれば、データが自動で呼び出されます。
+                    </p>
+                    <div class="text-[11px] text-slate-400 space-y-0.5 pt-1">
+                        <p>• <strong class="text-slate-300">ユーザーID:</strong> 6文字以上（英小文字、数字、-、_、@ のみ）</p>
+                        <p>• <strong class="text-slate-300">パスワード:</strong> 6文字以上（英大文字、英小文字、数字、記号[-_#]のうち3種類以上を使用。IDと同じものは不可）</p>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
+                    <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
+                        <i class="fa-solid fa-table-cells"></i> 2. 時間割と科目の登録
+                    </h4>
+                    <p class="text-slate-400 leading-relaxed">
+                        最初に「設定」タブの「履修科目登録」から受講する科目を追加してください。その後、「時間割」タブで各曜日の1〜7限に科目を割り当てます。
+                    </p>
+                </div>
+
+                <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
+                    <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
+                        <i class="fa-solid fa-clock-rotate-left"></i> 3. 欠席・遅刻・早退の記録
+                    </h4>
+                    <p class="text-slate-400 leading-relaxed">
+                        「本日の授業」タブでは、ワンタップで欠席切り替えが行えるほか、「全休」「遅刻」「早退」の一括処理も可能です。カレンダータブからも過去の日付の追加・削除やメモ編集が行えます。行事日や授業なしの日も、ステータスとしてカレンダーに残せます。
+                    </p>
+                </div>
+
+                <div class="p-3 bg-noir-950 rounded-xl border border-white/5 space-y-1.5">
+                    <h4 class="font-bold text-white flex items-center gap-1.5 text-indigo-400">
+                        <i class="fa-solid fa-chart-simple"></i> 4. 単位管理・注意アラート
+                    </h4>
+                    <p class="text-slate-400 leading-relaxed">
+                        「集計状況」タブで教科ごとの欠席回数や残り許容回数がひと目でわかります。「設定」タブの注意・警告設定から、科目ごとの上限回数を自由に変更できます。
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-2 shrink-0">
+                <button id="btnCloseGuideFooter" class="w-full py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold transition">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Subject Detail -->
     <div id="subjectDetailModal" class="fixed inset-0 bg-noir-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 border border-white/10">
             <div class="flex justify-between items-center border-b border-white/5 pb-3">
@@ -337,16 +446,14 @@
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
-            <div id="subjectDetailListContainer" class="space-y-2.5 max-h-64 overflow-y-auto no-scrollbar text-xs">
-                <!-- 動的生成 -->
-            </div>
+            <div id="subjectDetailListContainer" class="space-y-2.5 max-h-64 overflow-y-auto no-scrollbar text-xs"></div>
             <div class="pt-2">
                 <button id="btnCloseSubjectDetailFooter" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition border border-white/5">閉じる</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Confirmation (全休・遅刻・早退などの確認用) -->
+    <!-- Modal: Confirmation -->
     <div id="confirmModal" class="fixed inset-0 bg-noir-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 border border-white/10 text-center">
             <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto text-xl">
@@ -577,13 +684,15 @@
             fri: Array(7).fill({ subject: '' })
         };
 
-        let masterSubjects = JSON.parse(localStorage.getItem('att_master_subjects')) || [];
-        let timetable = JSON.parse(localStorage.getItem('att_timetable')) || EMPTY_TIMETABLE;
-        let records = JSON.parse(localStorage.getItem('att_records')) || {};
-        let subjectLimits = JSON.parse(localStorage.getItem('att_subject_limits')) || {};
-        let subjectWarnMargin = JSON.parse(localStorage.getItem('att_subject_warn_margin')) || {};
-        let dayNotes = JSON.parse(localStorage.getItem('att_day_notes')) || {};
-        let daySubjectOverrides = JSON.parse(localStorage.getItem('att_day_subject_overrides')) || {};
+        let currentUserId = localStorage.getItem('att_current_user') || null;
+
+        let masterSubjects = [];
+        let timetable = JSON.parse(JSON.stringify(EMPTY_TIMETABLE));
+        let records = {};
+        let subjectLimits = {};
+        let subjectWarnMargin = {};
+        let dayNotes = {};
+        let daySubjectOverrides = {};
 
         let currentTargetDate = new Date().toISOString().split('T')[0];
         let currentCalendarDate = new Date();
@@ -591,11 +700,174 @@
 
         let activeOverridePeriod = null;
         let confirmCallback = null;
+        let authMode = 'login'; // 'login' or 'register'
 
         const DAYS_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
         const DAYS_MAP = { mon: '月曜日', tue: '火曜日', wed: '水曜日', thu: '木曜日', fri: '金曜日', sat: '土曜日', sun: '日曜日' };
 
         document.addEventListener('DOMContentLoaded', () => {
+            initAuthSystem();
+            initGuideModal();
+        });
+
+        function initGuideModal() {
+            const guideModal = document.getElementById('guideModal');
+            document.getElementById('btnOpenGuide').addEventListener('click', () => {
+                guideModal.classList.remove('hidden');
+            });
+            document.getElementById('btnCloseGuide').addEventListener('click', () => {
+                guideModal.classList.add('hidden');
+            });
+            document.getElementById('btnCloseGuideFooter').addEventListener('click', () => {
+                guideModal.classList.add('hidden');
+            });
+        }
+
+        function initAuthSystem() {
+            const authModal = document.getElementById('authModal');
+            const userIdInput = document.getElementById('authUserId');
+            const passInput = document.getElementById('authPassword');
+            const btnSubmit = document.getElementById('btnAuthSubmit');
+            const btnLogout = document.getElementById('btnLogout');
+            const tabLogin = document.getElementById('tabLoginMode');
+            const tabRegister = document.getElementById('tabRegisterMode');
+            const authTitle = document.getElementById('authTitle');
+            const authDesc = document.getElementById('authDesc');
+            const authIcon = document.getElementById('authIcon');
+            const registerRules = document.getElementById('registerRules');
+
+            if (currentUserId) {
+                authModal.classList.add('hidden');
+                loadUserData(currentUserId);
+                startApp();
+            } else {
+                authModal.classList.remove('hidden');
+            }
+
+            tabLogin.addEventListener('click', () => {
+                authMode = 'login';
+                tabLogin.className = 'flex-1 py-2 rounded-lg bg-indigo-500 text-white transition';
+                tabRegister.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
+                authTitle.textContent = 'アカウント ログイン';
+                authDesc.textContent = '登録したIDとパスワードを入力してください';
+                authIcon.className = 'fa-solid fa-right-to-bracket';
+                btnSubmit.textContent = 'ログイン';
+                registerRules.classList.add('hidden');
+            });
+
+            tabRegister.addEventListener('click', () => {
+                authMode = 'register';
+                tabRegister.className = 'flex-1 py-2 rounded-lg bg-indigo-500 text-white transition';
+                tabLogin.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
+                authTitle.textContent = '新規アカウント作成';
+                authDesc.textContent = 'あなた専用のIDとパスワードを設定してください';
+                authIcon.className = 'fa-solid fa-user-plus';
+                btnSubmit.textContent = 'アカウントを作成して開始';
+                registerRules.classList.remove('hidden');
+            });
+
+            btnSubmit.addEventListener('click', () => {
+                const userId = userIdInput.value.trim().toLowerCase();
+                const pass = passInput.value.trim();
+
+                const userIdRegex = /^[a-z0-9\-_@]{6,}$/;
+                if (!userIdRegex.test(userId)) {
+                    alert('ユーザーIDは6文字以上で、半角英小文字、数字、-、_、@ のみ使用できます。');
+                    return;
+                }
+
+                const passCharsRegex = /^[A-Za-z0-9\-_#]{6,}$/;
+                if (!passCharsRegex.test(pass)) {
+                    alert('パスワードは6文字以上で、英大文字、英小文字、数字、ハイフン(-)、アンダースコア(_)、シャープ(#)のみ使用できます。');
+                    return;
+                }
+
+                if (pass === userId) {
+                    alert('パスワードをユーザーIDと全く同じにすることはできません。');
+                    return;
+                }
+
+                let charTypesCount = 0;
+                if (/[A-Z]/.test(pass)) charTypesCount++;
+                if (/[a-z]/.test(pass)) charTypesCount++;
+                if (/[0-9]/.test(pass)) charTypesCount++;
+                if (/[\-_#]/.test(pass)) charTypesCount++;
+
+                if (charTypesCount < 3) {
+                    alert('パスワードは「英大文字」「英小文字」「数字」「記号(-_#)」の中から3種類以上を使用してください。');
+                    return;
+                }
+
+                const usersDb = JSON.parse(localStorage.getItem('att_all_users_db')) || {};
+
+                if (authMode === 'register') {
+                    if (usersDb[userId]) {
+                        alert('このユーザーIDは既に他の人に使用されています。別のIDを指定してください。');
+                        return;
+                    }
+                    usersDb[userId] = pass;
+                    localStorage.setItem('att_all_users_db', JSON.stringify(usersDb));
+
+                    currentUserId = userId;
+                    localStorage.setItem('att_current_user', currentUserId);
+                    authModal.classList.add('hidden');
+                    loadUserData(currentUserId);
+                    startApp();
+                    showToast('アカウントを作成しました！', 'emerald');
+
+                } else {
+                    if (!usersDb[userId]) {
+                        alert('このユーザーIDは登録されていません。「新規アカウント作成」タブから登録してください。');
+                        return;
+                    }
+                    if (usersDb[userId] !== pass) {
+                        alert('パスワードが間違っています。');
+                        return;
+                    }
+
+                    currentUserId = userId;
+                    localStorage.setItem('att_current_user', currentUserId);
+                    authModal.classList.add('hidden');
+                    loadUserData(currentUserId);
+                    startApp();
+                    showToast('ログインしました', 'emerald');
+                }
+            });
+
+            btnLogout.addEventListener('click', () => {
+                if (confirm('ログアウトしますか？')) {
+                    localStorage.removeItem('att_current_user');
+                    location.reload();
+                }
+            });
+        }
+
+        function loadUserData(userId) {
+            const prefix = `att_u_${userId}_`;
+            masterSubjects = JSON.parse(localStorage.getItem(prefix + 'master_subjects')) || [];
+            timetable = JSON.parse(localStorage.getItem(prefix + 'timetable')) || JSON.parse(JSON.stringify(EMPTY_TIMETABLE));
+            records = JSON.parse(localStorage.getItem(prefix + 'records')) || {};
+            subjectLimits = JSON.parse(localStorage.getItem(prefix + 'subject_limits')) || {};
+            subjectWarnMargin = JSON.parse(localStorage.getItem(prefix + 'subject_warn_margin')) || {};
+            dayNotes = JSON.parse(localStorage.getItem(prefix + 'day_notes')) || {};
+            daySubjectOverrides = JSON.parse(localStorage.getItem(prefix + 'day_subject_overrides')) || {};
+
+            document.getElementById('currentLoginUserLabel').textContent = userId;
+        }
+
+        function saveUserData() {
+            if (!currentUserId) return;
+            const prefix = `att_u_${currentUserId}_`;
+            localStorage.setItem(prefix + 'master_subjects', JSON.stringify(masterSubjects));
+            localStorage.setItem(prefix + 'timetable', JSON.stringify(timetable));
+            localStorage.setItem(prefix + 'records', JSON.stringify(records));
+            localStorage.setItem(prefix + 'subject_limits', JSON.stringify(subjectLimits));
+            localStorage.setItem(prefix + 'subject_warn_margin', JSON.stringify(subjectWarnMargin));
+            localStorage.setItem(prefix + 'day_notes', JSON.stringify(dayNotes));
+            localStorage.setItem(prefix + 'day_subject_overrides', JSON.stringify(daySubjectOverrides));
+        }
+
+        function startApp() {
             initLiveClock();
             initTabs();
             initSettingSubTabs();
@@ -608,7 +880,7 @@
             renderSettingsTab();
 
             setupEventListeners();
-        });
+        }
 
         function initLiveClock() {
             const clockEl = document.getElementById('liveClock');
@@ -848,14 +1120,10 @@
             }
 
             records[dateStr].absences = list;
-            saveRecords();
+            saveUserData();
             renderTodayTab();
             renderCalendarTab();
             renderStatsTab();
-        }
-
-        function saveRecords() {
-            localStorage.setItem('att_records', JSON.stringify(records));
         }
 
         function renderCalendarTab() {
@@ -892,14 +1160,14 @@
                     const hasEarly = absences.some(a => a.note === '早退');
                     const hasAll = absences.some(a => a.note === '全休');
 
-                    if (hasAll || absences.length >= 4) {
-                        statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">欠席</span>';
+                    if (hasAll || absences.length === 999) {
+                        statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">全休</span>';
                     } else if (hasLate) {
                         statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">遅刻</span>';
                     } else if (hasEarly) {
                         statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-300 border border-yellow-500/30">早退</span>';
                     } else {
-                        statusBadgeHtml = `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">${absences.length}件</span>`;
+                        statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">欠席</span>';
                     }
                 } else if (memo) {
                     statusBadgeHtml = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 truncate max-w-[40px] inline-block">📝メモ</span>';
@@ -963,11 +1231,14 @@
             absences.forEach(abs => {
                 const item = document.createElement('div');
                 item.className = 'glass-panel-interactive p-3 rounded-xl flex items-center justify-between border border-white/5';
+                
+                // 行事等でコマがない場合の表示対応
+                const isSpecialStatus = (abs.period === 0);
                 item.innerHTML = `
                     <div>
-                        <span class="font-bold text-rose-300 mr-2">[${abs.period}限]</span>
+                        <span class="font-bold text-rose-300 mr-2">${isSpecialStatus ? '[行事・特別]' : `[${abs.period}限]`}</span>
                         <span class="font-medium text-slate-200">${abs.subject}</span>
-                        ${abs.note ? `<span class="text-[10px] text-slate-400 ml-2">(${abs.note})</span>` : ''}
+                        ${abs.note && !isSpecialStatus ? `<span class="text-[10px] text-slate-400 ml-2">(${abs.note})</span>` : ''}
                     </div>
                     <button class="text-slate-500 hover:text-rose-400 transition p-1" onclick="deleteCalendarAbsence('${selectedCalendarDate}', ${abs.period})">
                         <i class="fa-solid fa-trash-can text-xs"></i>
@@ -980,18 +1251,22 @@
         window.deleteCalendarAbsence = function(dateStr, period) {
             if (records[dateStr] && records[dateStr].absences) {
                 records[dateStr].absences = records[dateStr].absences.filter(a => a.period !== period);
-                saveRecords();
+                saveUserData();
                 renderCalendarTab();
                 renderTodayTab();
                 renderStatsTab();
-                showToast('欠席記録を削除しました', 'emerald');
+                showToast('記録を削除しました', 'emerald');
             }
         };
 
         function getAllActiveSubjects() {
             const subjectsSet = new Set(masterSubjects);
             Object.values(timetable).forEach(list => list.forEach(s => { if(s.subject) subjectsSet.add(s.subject); }));
-            Object.values(records).forEach(rec => { if(rec.absences) rec.absences.forEach(a => { if(a.subject) subjectsSet.add(a.subject); }); });
+            Object.values(records).forEach(rec => { 
+                if(rec.absences) {
+                    rec.absences.forEach(a => { if(a.subject && a.period !== 0) subjectsSet.add(a.subject); }); 
+                }
+            });
             return Array.from(subjectsSet);
         }
 
@@ -1006,7 +1281,7 @@
             Object.values(records).forEach(rec => {
                 if (rec.absences) {
                     rec.absences.forEach(abs => {
-                        if (abs.subject) {
+                        if (abs.subject && abs.period !== 0) {
                             if (!subjectCounts[abs.subject]) {
                                 subjectCounts[abs.subject] = { count: 0 };
                             }
@@ -1068,7 +1343,6 @@
                 container.appendChild(card);
             });
 
-            // 科目名クリックイベントの付与
             container.querySelectorAll('.subject-detail-trigger').forEach(el => {
                 el.addEventListener('click', () => {
                     openSubjectDetailModal(el.dataset.subject);
@@ -1089,14 +1363,13 @@
                 const rec = records[dateStr];
                 if (rec && rec.absences) {
                     rec.absences.forEach(abs => {
-                        if (abs.subject === subjectName) {
+                        if (abs.subject === subjectName && abs.period !== 0) {
                             history.push({ date: dateStr, period: abs.period, note: abs.note || '欠席' });
                         }
                     });
                 }
             });
 
-            // 日付順に並び替え
             history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (history.length === 0) {
@@ -1151,7 +1424,6 @@
         }
 
         function renderSettingsTab() {
-            // 1. 履修科目 (縦並び＆直接テキスト打ち編集)
             const verticalListEl = document.getElementById('masterSubjectVerticalList');
             verticalListEl.innerHTML = '';
 
@@ -1176,7 +1448,7 @@
                         const newVal = e.target.value.trim();
                         if (newVal) {
                             masterSubjects[index] = newVal;
-                            localStorage.setItem('att_master_subjects', JSON.stringify(masterSubjects));
+                            saveUserData();
                             showToast('科目名を変更しました', 'emerald');
                             renderStatsTab();
                         }
@@ -1184,7 +1456,6 @@
                 });
             }
 
-            // 2. 注意・警告設定
             const settingsContainer = document.getElementById('subjectSettingsContainer');
             settingsContainer.innerHTML = '';
 
@@ -1224,7 +1495,7 @@
                         const subj = e.target.dataset.subject;
                         const val = parseInt(e.target.value) || 4;
                         subjectLimits[subj] = val;
-                        localStorage.setItem('att_subject_limits', JSON.stringify(subjectLimits));
+                        saveUserData();
                         showToast('警告上限を保存しました', 'emerald');
                     });
                 });
@@ -1234,7 +1505,7 @@
                         const subj = e.target.dataset.subject;
                         const val = parseInt(e.target.value) || 1;
                         subjectWarnMargin[subj] = val;
-                        localStorage.setItem('att_subject_warn_margin', JSON.stringify(subjectWarnMargin));
+                        saveUserData();
                         showToast('注意設定を保存しました', 'emerald');
                     });
                 });
@@ -1243,7 +1514,7 @@
 
         window.deleteMasterSubject = function(idx) {
             masterSubjects.splice(idx, 1);
-            localStorage.setItem('att_master_subjects', JSON.stringify(masterSubjects));
+            saveUserData();
             renderSettingsTab();
             showToast('科目を削除しました', 'emerald');
         };
@@ -1306,7 +1577,6 @@
         }
 
         function setupEventListeners() {
-            // Subject Detail Modal Close
             document.getElementById('btnCloseSubjectDetail').addEventListener('click', () => {
                 document.getElementById('subjectDetailModal').classList.add('hidden');
             });
@@ -1314,7 +1584,6 @@
                 document.getElementById('subjectDetailModal').classList.add('hidden');
             });
 
-            // Confirm Modal Buttons
             document.getElementById('btnCancelConfirm').addEventListener('click', () => {
                 document.getElementById('confirmModal').classList.add('hidden');
                 confirmCallback = null;
@@ -1327,20 +1596,18 @@
                 }
             });
 
-            // Master Subject Add
             document.getElementById('btnAddMasterSubject').addEventListener('click', () => {
                 const input = document.getElementById('inputNewMasterSubject');
                 const val = input.value.trim();
                 if (val && !masterSubjects.includes(val)) {
                     masterSubjects.push(val);
-                    localStorage.setItem('att_master_subjects', JSON.stringify(masterSubjects));
+                    saveUserData();
                     input.value = '';
                     renderSettingsTab();
                     showToast('科目を追加しました', 'emerald');
                 }
             });
 
-            // Timetable Edit Dropdown
             document.getElementById('editSubjectSelect').addEventListener('change', (e) => {
                 const container = document.getElementById('editCustomInputContainer');
                 if (e.target.value === '__custom__') {
@@ -1374,7 +1641,7 @@
                 }
 
                 timetable[dayKey][periodIndex] = { subject: name };
-                localStorage.setItem('att_timetable', JSON.stringify(timetable));
+                saveUserData();
 
                 document.getElementById('editModal').classList.add('hidden');
                 renderTimetableGrid();
@@ -1383,7 +1650,6 @@
                 showToast('時間割を保存しました', 'emerald');
             });
 
-            // Today Subject Override
             document.getElementById('selectOverrideMasterSubject').addEventListener('change', (e) => {
                 const container = document.getElementById('overrideCustomInputContainer');
                 if (e.target.value === '__custom__') {
@@ -1417,7 +1683,7 @@
                     daySubjectOverrides[currentTargetDate] = {};
                 }
                 daySubjectOverrides[currentTargetDate][activeOverridePeriod] = newSubj;
-                localStorage.setItem('att_day_subject_overrides', JSON.stringify(daySubjectOverrides));
+                saveUserData();
                 document.getElementById('todaySubjectOverrideModal').classList.add('hidden');
                 renderTodayTab();
                 renderStatsTab();
@@ -1427,7 +1693,7 @@
             document.getElementById('btnResetOverrideSubject').addEventListener('click', () => {
                 if (daySubjectOverrides[currentTargetDate]) {
                     delete daySubjectOverrides[currentTargetDate][activeOverridePeriod];
-                    localStorage.setItem('att_day_subject_overrides', JSON.stringify(daySubjectOverrides));
+                    saveUserData();
                 }
                 document.getElementById('todaySubjectOverrideModal').classList.add('hidden');
                 renderTodayTab();
@@ -1435,13 +1701,12 @@
                 showToast('教科を元に戻しました', 'emerald');
             });
 
-            // 全休 (確認付き・既存を一度クリアしてから反映)
+            // 全休 (行事等でコマがない場合はカレンダー記録のみ、通常の日は教科ごとに記録)
             document.getElementById('btnConfirmAbsentAll').addEventListener('click', () => {
                 showConfirmModal('全休の一括記録', '本日のすべての授業を欠席として記録しますか？', () => {
                     if (!records[currentTargetDate]) {
                         records[currentTargetDate] = { overrideDay: 'auto', absences: [] };
                     }
-                    // 一度クリア
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
@@ -1455,16 +1720,21 @@
                     const newAbsences = [];
                     const todayOverrides = daySubjectOverrides[currentTargetDate] || {};
 
-                    daySubjects.forEach((subjObj, idx) => {
-                        const p = idx + 1;
-                        const name = todayOverrides[p] !== undefined ? todayOverrides[p] : subjObj.subject;
-                        if (name) {
-                            newAbsences.push({ period: p, subject: name, note: '全休' });
-                        }
-                    });
+                    if (activeDayKey === 'none' || daySubjects.length === 0 || daySubjects.every((s, idx) => !s.subject && !todayOverrides[idx + 1])) {
+                        // 行事や授業なし等の場合：コマ単位ではなくカレンダーに「全休」ステータスのみ付与（統計非連動）
+                        newAbsences.push({ period: 0, subject: '行事・終日行事 / 全休', note: '全休' });
+                    } else {
+                        daySubjects.forEach((subjObj, idx) => {
+                            const p = idx + 1;
+                            const name = todayOverrides[p] !== undefined ? todayOverrides[p] : subjObj.subject;
+                            if (name) {
+                                newAbsences.push({ period: p, subject: name, note: '全休' });
+                            }
+                        });
+                    }
 
                     records[currentTargetDate].absences = newAbsences;
-                    saveRecords();
+                    saveUserData();
                     renderTodayTab();
                     renderCalendarTab();
                     renderStatsTab();
@@ -1472,15 +1742,14 @@
                 });
             });
 
-            // 本日の授業リセット
             document.getElementById('btnResetTodayRow').addEventListener('click', () => {
-                showConfirmModal('本日の授業リセット', '本日の授業に対する変更やスケジュール設定を初期状態（通常の曜日設定）に戻しますか？', () => {
+                showConfirmModal('本日の授業リセット', '本日の授業に対する変更やスケジュール設定を初期状態に戻しますか？', () => {
                     if (records[currentTargetDate]) {
                         delete records[currentTargetDate].overrideDay;
                     }
                     if (daySubjectOverrides[currentTargetDate]) {
                         delete daySubjectOverrides[currentTargetDate];
-                        localStorage.setItem('att_day_subject_overrides', JSON.stringify(daySubjectOverrides));
+                        saveUserData();
                     }
                     document.getElementById('selectTodayScheduleDay').value = 'auto';
                     renderTodayTab();
@@ -1488,11 +1757,10 @@
                 });
             });
 
-            // クリア
             document.getElementById('btnQuickReset').addEventListener('click', () => {
                 if (records[currentTargetDate]) {
                     records[currentTargetDate].absences = [];
-                    saveRecords();
+                    saveUserData();
                     renderTodayTab();
                     renderCalendarTab();
                     renderStatsTab();
@@ -1500,13 +1768,12 @@
                 }
             });
 
-            // 日程タイプ切替
             document.getElementById('selectTodayScheduleDay').addEventListener('change', (e) => {
                 if (!records[currentTargetDate]) {
                     records[currentTargetDate] = { overrideDay: 'auto', absences: [] };
                 }
                 records[currentTargetDate].overrideDay = e.target.value;
-                saveRecords();
+                saveUserData();
                 renderTodayTab();
                 showToast('日程タイプを反映しました', 'emerald');
             });
@@ -1527,11 +1794,10 @@
                 const startP = parseInt(document.getElementById('modalLateSelect').value);
                 lateModal.classList.add('hidden');
 
-                showConfirmModal('遅刻の記録確認', `${startP}限目からの出席（それ以前は欠席）として記録しますか？`, () => {
+                showConfirmModal('遅刻の記録確認', `${startP}限目からの出席として記録しますか？`, () => {
                     if (!records[currentTargetDate]) {
                         records[currentTargetDate] = { overrideDay: 'auto', absences: [] };
                     }
-                    // ★送信前に一度本日の既存の欠席・遅刻・早退記録を完全にクリアしてから反映
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
@@ -1544,15 +1810,19 @@
                     let currentAbs = [];
                     const todayOverrides = daySubjectOverrides[currentTargetDate] || {};
 
-                    for (let p = 1; p < startP; p++) {
-                        const subj = todayOverrides[p] !== undefined ? todayOverrides[p] : (daySubjects[p - 1] ? daySubjects[p - 1].subject : '');
-                        if (subj) {
-                            currentAbs.push({ period: p, subject: subj, note: '遅刻' });
+                    if (activeDayKey === 'none' || daySubjects.length === 0 || daySubjects.every((s, idx) => !s.subject && !todayOverrides[idx + 1])) {
+                        currentAbs.push({ period: 0, subject: `遅刻 (${startP}限から出席)`, note: '遅刻' });
+                    } else {
+                        for (let p = 1; p < startP; p++) {
+                            const subj = todayOverrides[p] !== undefined ? todayOverrides[p] : (daySubjects[p - 1] ? daySubjects[p - 1].subject : '');
+                            if (subj) {
+                                currentAbs.push({ period: p, subject: subj, note: '遅刻' });
+                            }
                         }
                     }
 
                     records[currentTargetDate].absences = currentAbs;
-                    saveRecords();
+                    saveUserData();
                     renderTodayTab();
                     renderCalendarTab();
                     renderStatsTab();
@@ -1572,11 +1842,10 @@
                 const earlyP = parseInt(document.getElementById('modalEarlySelect').value);
                 earlyModal.classList.add('hidden');
 
-                showConfirmModal('早退の記録確認', `${earlyP}限目からの早退（以降の授業を欠席）として記録しますか？`, () => {
+                showConfirmModal('早退の記録確認', `${earlyP}限目からの早退として記録しますか？`, () => {
                     if (!records[currentTargetDate]) {
                         records[currentTargetDate] = { overrideDay: 'auto', absences: [] };
                     }
-                    // ★送信前に一度本日の既存の欠席・遅刻・早退記録を完全にクリアしてから反映
                     records[currentTargetDate].absences = [];
 
                     const activeDayKey = getActiveDayKey(currentTargetDate);
@@ -1589,15 +1858,19 @@
                     let currentAbs = [];
                     const todayOverrides = daySubjectOverrides[currentTargetDate] || {};
 
-                    for (let p = earlyP; p <= 7; p++) {
-                        const subj = todayOverrides[p] !== undefined ? todayOverrides[p] : (daySubjects[p - 1] ? daySubjects[p - 1].subject : '');
-                        if (subj) {
-                            currentAbs.push({ period: p, subject: subj, note: '早退' });
+                    if (activeDayKey === 'none' || daySubjects.length === 0 || daySubjects.every((s, idx) => !s.subject && !todayOverrides[idx + 1])) {
+                        currentAbs.push({ period: 0, subject: `早退 (${earlyP}限から早退)`, note: '早退' });
+                    } else {
+                        for (let p = earlyP; p <= 7; p++) {
+                            const subj = todayOverrides[p] !== undefined ? todayOverrides[p] : (daySubjects[p - 1] ? daySubjects[p - 1].subject : '');
+                            if (subj) {
+                                currentAbs.push({ period: p, subject: subj, note: '早退' });
+                            }
                         }
                     }
 
                     records[currentTargetDate].absences = currentAbs;
-                    saveRecords();
+                    saveUserData();
                     renderTodayTab();
                     renderCalendarTab();
                     renderStatsTab();
@@ -1605,7 +1878,6 @@
                 });
             });
 
-            // 日付メモ
             const dayNoteModal = document.getElementById('dayNoteModal');
             document.getElementById('btnOpenDayNoteModal').addEventListener('click', () => {
                 if (!selectedCalendarDate) return;
@@ -1623,13 +1895,12 @@
                 } else {
                     delete dayNotes[selectedCalendarDate];
                 }
-                localStorage.setItem('att_day_notes', JSON.stringify(dayNotes));
+                saveUserData();
                 dayNoteModal.classList.add('hidden');
                 renderCalendarTab();
                 showToast('日付メモを保存しました', 'emerald');
             });
 
-            // カレンダーナビ
             document.getElementById('btnPrevMonth').addEventListener('click', () => {
                 currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
                 renderCalendarTab();
@@ -1643,7 +1914,6 @@
                 renderCalendarTab();
             });
 
-            // 手動追加
             document.getElementById('btnOpenAddAbsenceModal').addEventListener('click', () => {
                 if (!selectedCalendarDate) return;
                 
@@ -1691,11 +1961,10 @@
                 renderCalendarTab();
             });
 
-            // リセット
             document.getElementById('btnResetTimetable').addEventListener('click', () => {
                 showConfirmModal('時間割のリセット', '時間割の登録内容をすべてリセットしますか？', () => {
-                    timetable = EMPTY_TIMETABLE;
-                    localStorage.setItem('att_timetable', JSON.stringify(timetable));
+                    timetable = JSON.parse(JSON.stringify(EMPTY_TIMETABLE));
+                    saveUserData();
                     renderTimetableGrid();
                     renderTodayTab();
                     renderStatsTab();
