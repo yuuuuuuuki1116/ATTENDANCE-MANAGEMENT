@@ -110,31 +110,41 @@
 
   <!-- ログイン後のメイン画面 -->
   <div id="main-app" class="main-layout hidden">
-    <!-- 上部ヘッダー（薄めの青背景） -->
+    <!-- 上部ヘッダー -->
     <header class="main-header">
       <div class="header-left">
-        <span class="version-text">ver1.1.1</span>
-        <!-- タイトル（クリックでホームへ戻る） -->
+        <span class="version-text">ver1.1.2</span>
         <span id="app-title-btn" class="main-header-title clickable-title" title="ホームへ戻る">ATTENDANCE MANAGEMENT</span>
       </div>
       <div class="main-header-icons">
-        <!-- お知らせ（ベル） -->
+        <button type="button" id="help-btn" class="icon-btn" title="ヘルプ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="overflow: visible; display: block;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </button>
         <button type="button" id="notices-btn" class="icon-btn" title="お知らせ">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="overflow: visible; display: block;">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
           </svg>
         </button>
-        <!-- 設定（歯車：ビューポート修正で欠けを防止） -->
         <button type="button" id="settings-btn" class="icon-btn" title="設定">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="overflow: visible; display: block;">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
           </svg>
         </button>
-        <!-- ログアウト（出口アイコン） -->
         <button type="button" id="header-logout-btn" class="icon-btn" title="ログアウト">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="overflow: visible; display: block;">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -144,13 +154,78 @@
     </header>
 
     <!-- ホーム画面 -->
-    <main id="home-view" class="main-content">
-      <div class="center-card">
-        <h2 class="title-blue">準備中。</h2>
-        <p class="sub-text">ホーム画面は現在準備中です。</p>
-        <button type="button" id="logout-btn" class="btn btn-outline" style="margin-top: 20px;">ログアウト</button>
+    <main id="home-view" class="main-content" style="align-items: stretch; justify-content: flex-start; padding: 24px;">
+      <div style="width: 100%; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+        <!-- 日付とホームタイトル -->
+        <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+          <div id="current-date-display" style="font-size: 1.05rem; font-weight: 600; color: #555555; margin-bottom: 4px;"></div>
+          <h2 class="title-blue" style="font-size: 1.6rem; margin-bottom: 0;">ホーム</h2>
+        </div>
+
+        <!-- 本日の授業科目一覧 -->
+        <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 1.1rem; color: #0066cc; font-weight: bold; margin-bottom: 0;">本日の授業</h3>
+            <button type="button" id="open-home-timetable-override-btn" class="btn btn-outline" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-top: 0;">本日の時間割変更</button>
+          </div>
+          <div id="home-today-timetable-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- JSで動的生成 -->
+          </div>
+        </div>
+
+        <!-- 履修科目登録 -->
+        <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-size: 1.1rem; color: #0066cc; font-weight: bold;">履修科目登録</h3>
+            <button type="button" id="open-add-course-modal" class="btn btn-primary" style="width: auto; padding: 8px 16px; font-size: 0.85rem;">登録</button>
+          </div>
+          <p class="sub-text" style="font-size: 0.85rem; margin-bottom: 16px;">期間ごとに科目をまとめて登録できます。</p>
+          <div id="course-groups-list" style="display: flex; flex-direction: column; gap: 12px;">
+            <p id="no-courses-msg" style="font-size: 0.85rem; color: #888; text-align: center; padding: 16px 0;">まだ履修科目が登録されていません。</p>
+          </div>
+        </div>
       </div>
     </main>
+
+    <!-- 履修科目追加モーダル -->
+    <div id="course-modal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;">
+      <div style="background: #ffffff; width: 100%; max-width: 450px; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+        <h3 class="title-blue" style="font-size: 1.3rem; margin-bottom: 16px;">履修科目のまとめ登録</h3>
+        <div id="modal-error-msg" class="error-banner hidden" style="margin-bottom: 16px;"></div>
+
+        <div class="form-group">
+          <label for="group-title">まとめのタイトル（例: 2026年度 前期）</label>
+          <input type="text" id="group-title" placeholder="例: 2026年度 前期">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label for="group-start">開始日（必須）</label>
+            <input type="date" id="group-start" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </div>
+          <div class="form-group">
+            <label for="group-end">終了日（必須）</label>
+            <input type="date" id="group-end" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 8px;">
+          <label>科目一覧（自由記入・必須）</label>
+          <div id="subject-inputs-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" class="subject-input" placeholder="科目名を入力 (例: 線形代数I)" style="flex: 1;">
+              <button type="button" class="btn btn-outline js-remove-subject" style="width: auto; padding: 6px 10px; color: #e53e3e; border-color: #f8b4b4;">削除</button>
+            </div>
+          </div>
+          <button type="button" id="add-subject-input-btn" class="blue-link-btn" style="font-size: 0.85rem; margin-top: 4px;">+ 科目を追加</button>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="button" id="save-course-group-btn" class="btn btn-primary" style="flex: 1;">登録する</button>
+          <button type="button" id="close-course-modal" class="btn btn-outline" style="flex: 1;">キャンセル</button>
+        </div>
+      </div>
+    </div>
 
     <!-- 欠席記録画面 -->
     <main id="absence-view" class="main-content hidden">
@@ -169,41 +244,318 @@
     </main>
 
     <!-- カレンダー画面 -->
-    <main id="calendar-view" class="main-content hidden">
-      <div class="center-card">
-        <h2 class="title-blue">準備中。</h2>
-        <p class="sub-text" style="margin-bottom: 0;">カレンダー画面は現在準備中です。</p>
-      </div>
-    </main>
+    <main id="calendar-view" class="main-content hidden" style="align-items: stretch; justify-content: flex-start; padding: 24px;">
+      <div style="width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+        <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button type="button" id="cal-prev-month" class="btn btn-outline" style="width: auto; padding: 6px 12px; font-size: 0.85rem;">&lt; 先月</button>
+              <h2 id="cal-month-title" class="title-blue" style="font-size: 1.3rem; margin-bottom: 0;">2026年 10月</h2>
+              <button type="button" id="cal-next-month" class="btn btn-outline" style="width: auto; padding: 6px 12px; font-size: 0.85rem;">翌月 &gt;</button>
+            </div>
+            <!-- カレンダー上部（右上）の予定を追加ボタン（複数日選択用） -->
+            <button type="button" id="open-add-event-modal" class="btn btn-primary" style="width: auto; padding: 6px 14px; font-size: 0.85rem; margin-top: 0;">+ 予定を追加</button>
+          </div>
 
-    <!-- 時間割画面 -->
-    <main id="timetable-view" class="main-content hidden">
-      <div class="center-card">
-        <h2 class="title-blue">準備中。</h2>
-        <p class="sub-text" style="margin-bottom: 0;">時間割画面は現在準備中です。</p>
-      </div>
-    </main>
+          <!-- カレンダーグリッド（列幅固定） -->
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; table-layout: fixed; border-collapse: collapse; text-align: center; font-size: 0.85rem;">
+              <thead>
+                <tr style="background: #e6f0fa; color: #004080;">
+                  <th style="padding: 10px 4px; border: 1px solid #cce0f5; color: #e53e3e; width: 14.28%;">日</th>
+                  <th style="padding: 10px 4px; border: 1px solid #cce0f5; width: 14.28%;">月</th>
+                  <th style="padding: 10px 4px; border: 1px solid #cce0f5; width: 14.28%;">火</th>
+                  <th style="padding: 10px 4px; border: 1px solid #cce0f5; width: 14.28%;">水</th>
+                  <th style="padding: 10px 4px; border: 1px solid #cce0f5; width: 14.28%;">木</th>
+                  <th style="padding: 10px 4px; border: 1px solid #cce0f5; width: 14.28%;">金</th>
+                  <th style="padding: 10px 4px; border: 1px solid #cce0f5; color: #0066cc; width: 14.28%;">土</th>
+                </tr>
+              </thead>
+              <tbody id="calendar-grid-body">
+                <!-- JSで動的生成 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-    <!-- お知らせ一覧画面 -->
-    <main id="notices-view" class="main-content hidden">
-      <div class="notices-container">
-        <h2 class="title-blue" style="margin-bottom: 20px;">お知らせ</h2>
-        
-        <div class="notice-item" id="notice-item-ver111">
-          <div class="notice-header">
-            <span class="notice-tag">リリース</span>
-            <span class="notice-title">ver1.1.1</span>
-            <span class="notice-arrow">＞</span>
+        <!-- カレンダー下部：選択された日付の予定詳細・追加アクションエリア -->
+        <div id="calendar-day-detail-card" class="hidden" style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 id="cal-detail-date-title" class="title-blue" style="font-size: 1.1rem; margin-bottom: 0;">日付の詳細</h3>
+            <div style="display: flex; gap: 8px;">
+              <!-- カレンダー下部の予定を追加ボタン（当日用） -->
+              <button type="button" id="cal-detail-add-event-btn" class="btn btn-primary" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-top: 0;">+ 予定を追加</button>
+              <button type="button" id="cal-detail-add-override-btn" class="btn btn-outline" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-top: 0; color: #0066cc;">+ 時間割変更</button>
+            </div>
+          </div>
+          <div id="cal-detail-events-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- JSで動的生成 -->
           </div>
         </div>
       </div>
     </main>
 
-    <!-- お知らせ詳細画面（別画面表示） -->
-    <main id="notice-detail-view" class="main-content hidden">
+    <!-- 予定追加・編集モーダル -->
+    <div id="event-modal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto;">
+      <div style="background: #ffffff; width: 100%; max-width: 480px; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;">
+        <h3 id="event-modal-heading" class="title-blue" style="font-size: 1.3rem; margin-bottom: 16px;">予定の追加</h3>
+        <div id="event-error-msg" class="error-banner hidden" style="margin-bottom: 16px;"></div>
+
+        <!-- 日付設定グループ（右上からの複数日選択用、または詳細からの当日用で切り替わり） -->
+        <div id="event-date-group-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="event-start-date">開始日</label>
+            <input type="date" id="event-start-date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="event-end-date">終了日（連続期間）</label>
+            <input type="date" id="event-end-date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="event-category">種類</label>
+          <select id="event-category" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff;">
+            <option value="test">テスト</option>
+            <option value="event">行事</option>
+            <option value="holiday">休日</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="event-color">カラー選択</label>
+          <select id="event-color" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff;">
+            <option value="blue">ブルー（標準）</option>
+            <option value="red">レッド</option>
+            <option value="green">グリーン</option>
+            <option value="orange">オレンジ</option>
+            <option value="purple">パープル</option>
+            <option value="gray">グレー</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="event-title">詳細（タイトル・内容）</label>
+          <input type="text" id="event-title" placeholder="例: 中間テスト数学 / 体育祭など">
+        </div>
+
+        <div class="form-group">
+          <label for="event-memo">メモ</label>
+          <textarea id="event-memo" placeholder="詳細なメモや持ち物などを入力" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; height: 70px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="button" id="save-event-btn" class="btn btn-primary" style="flex: 1;">保存する</button>
+          <button type="button" id="close-event-modal" class="btn btn-outline" style="flex: 1;">キャンセル</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 時間割変更モーダル（独立） -->
+    <div id="override-modal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto;">
+      <div style="background: #ffffff; width: 100%; max-width: 480px; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;">
+        <h3 id="override-modal-heading" class="title-blue" style="font-size: 1.3rem; margin-bottom: 16px;">時間割変更の登録</h3>
+        <div id="override-error-msg" class="error-banner hidden" style="margin-bottom: 16px;"></div>
+
+        <div id="override-date-group-container" class="form-group">
+          <label for="override-target-date">対象日</label>
+          <input type="date" id="override-target-date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="override-weekday" style="font-size: 0.85rem;">曜日振替</label>
+            <select id="override-weekday" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; font-size: 0.9rem;">
+              <option value="">(-- 通常通り --)</option>
+              <option value="mon">月曜日</option>
+              <option value="tue">火曜日</option>
+              <option value="wed">水曜日</option>
+              <option value="thu">木曜日</option>
+              <option value="fri">金曜日</option>
+              <option value="sat">土曜日</option>
+              <option value="sun">日曜日</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="override-max-period" style="font-size: 0.85rem;">時限数 (1〜10限)</label>
+            <select id="override-max-period" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; font-size: 0.9rem;">
+              <option value="">(-- 標準 --)</option>
+              <option value="1">1時限</option>
+              <option value="2">2時限</option>
+              <option value="3">3時限</option>
+              <option value="4">4時限</option>
+              <option value="5">5時限</option>
+              <option value="6">6時限</option>
+              <option value="7">7時限</option>
+              <option value="8">8時限</option>
+              <option value="9">9時限</option>
+              <option value="10">10時限</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="font-size: 0.85rem; margin-bottom: 6px; display: block;">個別時限変更</label>
+          <div id="override-periods-list" style="display: flex; flex-direction: column; gap: 6px;">
+            <!-- JS動的生成 -->
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="button" id="save-override-btn" class="btn btn-primary" style="flex: 1;">保存する</button>
+          <button type="button" id="close-override-modal" class="btn btn-outline" style="flex: 1;">キャンセル</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 時間割画面 -->
+    <main id="timetable-view" class="main-content hidden" style="align-items: stretch; justify-content: flex-start; padding: 24px;">
+      <div style="width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- 時間割一覧・選択ビュー -->
+        <div id="timetable-list-card" style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <h2 class="title-blue" style="font-size: 1.5rem; margin-bottom: 4px;">時間割管理</h2>
+              <p class="sub-text" style="font-size: 0.85rem; margin-bottom: 0;">期間ごとに時間割を登録・切り替えできます。</p>
+            </div>
+            <button type="button" id="open-add-timetable-modal" class="btn btn-primary" style="width: auto; padding: 8px 16px; font-size: 0.85rem;">+ 時間割を追加</button>
+          </div>
+
+          <div id="timetable-groups-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
+            <p id="no-timetable-msg" style="font-size: 0.85rem; color: #888; text-align: center; padding: 16px 0;">まだ時間割が登録されていません。</p>
+          </div>
+        </div>
+
+        <!-- 時間割グリッド表示ビュー -->
+        <div id="timetable-display-card" style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div>
+              <h3 id="tt-active-title" class="title-blue" style="font-size: 1.2rem; margin-bottom: 2px;">時間割表示</h3>
+              <div id="timetable-period-label" style="font-size: 0.8rem; color: #6688aa; font-weight: 500;">期間未設定</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" id="start-edit-timetable-btn" class="btn btn-primary" style="width: auto; padding: 6px 14px; font-size: 0.85rem;">編集</button>
+              <button type="button" id="back-to-tt-list-btn" class="btn btn-outline" style="width: auto; padding: 6px 14px; font-size: 0.85rem;">一覧へ戻る</button>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto; margin-top: 16px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: center;">
+              <thead>
+                <tr id="timetable-header-row" style="background: #e6f0fa; color: #004080;">
+                  <th style="padding: 10px; border: 1px solid #cce0f5; width: 40px;">時限</th>
+                </tr>
+              </thead>
+              <tbody id="timetable-grid-body">
+                <!-- JSで動的生成 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- 時間割追加・編集モーダル -->
+    <div id="timetable-modal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto;">
+      <div style="background: #ffffff; width: 100%; max-width: 600px; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;">
+        <h3 id="tt-modal-heading" class="title-blue" style="font-size: 1.3rem; margin-bottom: 16px;">時間割の作成</h3>
+        
+        <div id="timetable-edit-error" class="error-banner hidden" style="margin-bottom: 16px;"></div>
+
+        <div class="form-group">
+          <label for="tt-modal-title">時間割のタイトル（例: 2026年度 前期時間割）</label>
+          <input type="text" id="tt-modal-title" placeholder="例: 2026年度 前期時間割">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="tt-start-date">適用開始日</label>
+            <input type="date" id="tt-start-date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="tt-end-date">適用終了日</label>
+            <input type="date" id="tt-end-date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </div>
+        </div>
+
+        <p class="sub-text" style="font-size: 0.85rem; margin-bottom: 12px;">設定した期間内の履修科目から選択できます。</p>
+
+        <div style="overflow-x: auto; margin-bottom: 20px;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: center;">
+            <thead>
+              <tr id="timetable-modal-header-row" style="background: #e6f0fa; color: #004080;">
+                <th style="padding: 10px; border: 1px solid #cce0f5; width: 40px;">時限</th>
+              </tr>
+            </thead>
+            <tbody id="timetable-edit-grid-body">
+              <!-- JSで生成 -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button type="button" id="save-timetable-btn" class="btn btn-primary" style="flex: 1;">決定</button>
+          <button type="button" id="cancel-timetable-btn" class="btn btn-outline" style="flex: 1;">キャンセル</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- お知らせ一覧画面 -->
+    <main id="notices-view" class="main-content hidden">
+      <div class="notices-container">
+        <h2 class="title-blue" style="margin-bottom: 20px;">お知らせ</h2>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="notice-item" id="notice-item-ver112">
+            <div class="notice-header">
+              <span class="notice-tag">リリース</span>
+              <span class="notice-title">ver1.1.2</span>
+              <span id="notice-date-ver112" style="font-size: 0.8rem; color: #666; margin-right: 8px;"></span>
+              <span class="notice-arrow">＞</span>
+            </div>
+          </div>
+          <div class="notice-item" id="notice-item-ver111">
+            <div class="notice-header">
+              <span class="notice-tag">リリース</span>
+              <span class="notice-title">ver1.1.1</span>
+              <span id="notice-date-ver111" style="font-size: 0.8rem; color: #666; margin-right: 8px;"></span>
+              <span class="notice-arrow">＞</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- お知らせ詳細画面（ver1.1.2） -->
+    <main id="notice-detail-view-ver112" class="main-content hidden">
       <div class="notices-container">
         <div class="notice-detail-header">
-          <button type="button" id="back-to-notices-btn" class="blue-link-btn">← お知らせ一覧に戻る</button>
+          <button type="button" class="back-to-notices-btn blue-link-btn">← お知らせ一覧に戻る</button>
+        </div>
+        <div class="notice-detail-content">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <span class="notice-tag">リリース</span>
+            <h2 class="title-blue" style="font-size: 1.5rem; margin-bottom: 0;">ver1.1.2</h2>
+          </div>
+          <div class="notice-detail-body">
+            <p><strong>【主なアップデート内容】</strong></p>
+            <ul style="margin-top: 8px; margin-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+              <li><strong>ホーム画面・時間割機能の実装</strong>：本日の授業時間割の確認や期間ごとの時間割管理がスムーズに行えるようになりました。</li>
+              <li><strong>カレンダー機能の強化</strong>：カレンダー上部からの複数日連続での予定登録、および詳細からの当日個別予定追加に対応しました。</li>
+              <li><strong>細かな調整・不具合修正</strong>：ログイン画面のパスワード表示ボタンと目のマークの重複を解消し、より快適にご利用いただけるよう全体的な調整を行いました。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- お知らせ詳細画面（ver1.1.1） -->
+    <main id="notice-detail-view-ver111" class="main-content hidden">
+      <div class="notices-container">
+        <div class="notice-detail-header">
+          <button type="button" class="back-to-notices-btn blue-link-btn">← お知らせ一覧に戻る</button>
         </div>
         <div class="notice-detail-content">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
@@ -214,6 +566,14 @@
             <p>この度、アプリの動作確認を目的とした仮リリースを実施します。</p>
           </div>
         </div>
+      </div>
+    </main>
+
+    <!-- ヘルプ画面 -->
+    <main id="help-view" class="main-content hidden">
+      <div class="center-card">
+        <h2 class="title-blue">準備中。</h2>
+        <p class="sub-text" style="margin-bottom: 0;">ヘルプ画面は現在準備中です。</p>
       </div>
     </main>
 
@@ -231,14 +591,15 @@
               <li><button type="button" data-title="通知設定" class="settings-menu-item js-settings-item">通知設定</button></li>
               <li><button type="button" data-title="勤怠・打刻設定" class="settings-menu-item js-settings-item">勤怠・打刻設定</button></li>
               <li><button type="button" data-title="セキュリティ設定" class="settings-menu-item js-settings-item">セキュリティ</button></li>
+              <li><button type="button" data-title="時間割設定" class="settings-menu-item js-settings-item">時間割設定</button></li>
               <li><button type="button" data-title="ヘルプ & サポート" class="settings-menu-item js-settings-item">ヘルプ & サポート</button></li>
             </ul>
           </aside>
 
-          <section class="settings-content">
-            <div class="settings-card">
-              <h3 id="settings-content-title" class="title-blue" style="font-size: 1.4rem;">アカウント設定</h3>
-              <p id="settings-content-desc" class="sub-text" style="margin-bottom: 0;">アカウント設定は現在準備中です。</p>
+          <section class="settings-content" style="align-items: flex-start; justify-content: flex-start;">
+            <div id="settings-dynamic-panel" class="settings-card" style="width: 100%; text-align: left;">
+              <h3 id="settings-content-title" class="title-blue" style="font-size: 1.4rem; margin-bottom: 8px;">アカウント設定</h3>
+              <p id="settings-content-desc" class="sub-text">アカウント設定は現在準備中です。</p>
             </div>
           </section>
         </div>
@@ -248,28 +609,57 @@
     <!-- 下部インデックスバー -->
     <nav class="index-bar">
       <button type="button" id="tab-home" class="index-tab active">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="overflow: visible; display: block;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
         <span>ホーム</span>
       </button>
       <button type="button" id="tab-absence" class="index-tab">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="overflow: visible; display: block;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>
         <span>欠席記録</span>
       </button>
       <button type="button" id="tab-status" class="index-tab">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="overflow: visible; display: block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
         <span>記録状況</span>
       </button>
       <button type="button" id="tab-calendar" class="index-tab">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="overflow: visible; display: block;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
         <span>カレンダー</span>
       </button>
       <button type="button" id="tab-timetable" class="index-tab">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect><line x1="2" y1="9" x2="22" y2="9"></line><line x1="2" y1="15" x2="22" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="overflow: visible; display: block;"><rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect><line x1="2" y1="9" x2="22" y2="9"></line><line x1="2" y1="15" x2="22" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line></svg>
         <span>時間割</span>
       </button>
     </nav>
   </div>
 
+  <!-- 自動日付表示スクリプト -->
+  <script>
+    function updateCurrentDate() {
+      const dateElem = document.getElementById('current-date-display');
+      if (dateElem) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        const weekday = weekdays[now.getDay()];
+        dateElem.textContent = `${year}年${month}月${day}日 (${weekday})`;
+      }
+
+      // お知らせの日付設定（ver1.1.1は昨日、ver1.1.2は今日）
+      const nowMs = new Date();
+      const yesterdayMs = new Date(nowMs.getTime() - (24 * 60 * 60 * 1000));
+
+      const formatDate = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+
+      const dateVer112Elem = document.getElementById('notice-date-ver112');
+      const dateVer111Elem = document.getElementById('notice-date-ver111');
+      if (dateVer112Elem) dateVer112Elem.textContent = formatDate(nowMs);
+      if (dateVer111Elem) dateVer111Elem.textContent = formatDate(yesterdayMs);
+    }
+    updateCurrentDate();
+  </script>
+
+  <!-- アプリメインスクリプト -->
   <script type="module" src="app.js"></script>
 </body>
 </html>

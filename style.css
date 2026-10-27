@@ -1,54 +1,59 @@
-/* 全体設定 */
+/* リセットと全体の設定 */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
-  background-color: #fafafa;
+  background-color: #f0f4f8;
   color: #333333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
 }
 
+/* 共通コンテナ・カード */
 .container {
   width: 100%;
-  max-width: 420px;
-  padding: 20px;
-  margin: 0 auto;
+  max-width: 480px;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  justify-content: center;
-}
-
-.app-header h1 {
-  font-size: 1.2rem;
-  letter-spacing: 1px;
-  color: #444444;
-  margin-bottom: 24px;
-  text-align: center;
-  font-weight: 600;
 }
 
 .card {
-  background-color: #ffffff;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  padding: 32px 24px;
   width: 100%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .hidden {
   display: none !important;
 }
 
+/* ヘッダー */
+.app-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.app-header h1 {
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  color: #0066cc;
+  font-weight: bold;
+}
+
+/* タイトル・テキスト */
 .title-blue {
   color: #0066cc;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+  font-weight: bold;
   margin-bottom: 8px;
 }
 
@@ -58,128 +63,71 @@ body {
   margin-bottom: 24px;
 }
 
-.error-banner {
-  background-color: #fde8e8;
-  color: #e53e3e;
-  border: 1px solid #f8b4b4;
-  padding: 12px 14px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  margin-bottom: 20px;
-}
-
+/* フォーム要素 */
 .form-group {
-  margin-bottom: 18px;
-  display: flex;
-  flex-direction: column;
   width: 100%;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
 .form-group label {
+  display: block;
   font-size: 0.85rem;
+  font-weight: 600;
   color: #444444;
   margin-bottom: 6px;
-  font-weight: 500;
 }
 
-input[type="email"],
-input[type="password"],
-input[type="text"] {
-  width: 100% !important;
-  max-width: 100% !important;
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
   padding: 12px;
-  border: 1px solid #cccccc;
-  border-radius: 6px;
-  font-size: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  background-color: #ffffff;
-  color: #333333;
+  transition: border-color 0.2s;
 }
 
-input::-ms-reveal,
-input::-ms-clear {
-  display: none;
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: #0066cc;
 }
 
+/* パスワード表示切り替えラッパー */
 .password-wrapper {
   position: relative;
-  display: block;
   width: 100%;
 }
 
-.password-wrapper input[type="password"],
-.password-wrapper input[type="text"] {
-  width: 100% !important;
-  padding-right: 65px;
+.password-wrapper input {
+  padding-right: 54px;
 }
 
 .toggle-password {
   position: absolute;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  right: 12px;
   background: none;
   border: none;
   color: #0066cc;
-  font-weight: 500;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   cursor: pointer;
-  padding: 6px 8px;
-  z-index: 5;
+  font-weight: 600;
+  padding: 4px 6px;
+  z-index: 2;
 }
 
-.toggle-password:hover {
-  color: #0052a3;
-}
-
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="text"]:focus {
-  border-color: #0066cc;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
-}
-
-.blue-link {
-  color: #0066cc;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: text-decoration 0.2s;
-}
-
-.blue-link:hover {
-  text-decoration: underline;
-}
-
-.blue-link-btn {
-  background: none;
-  border: none;
-  color: #0066cc;
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 0;
-  font-weight: 500;
-}
-
-.blue-link-btn:hover {
-  text-decoration: underline;
-}
-
-.forgot-link {
-  text-align: right;
-  margin-bottom: 20px;
-}
-
+/* ボタン */
 .btn {
   width: 100%;
   padding: 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
   font-weight: bold;
   cursor: pointer;
+  border: none;
   transition: background-color 0.2s;
+  margin-top: 8px;
 }
 
 .btn-primary {
@@ -192,360 +140,328 @@ input[type="text"]:focus {
 }
 
 .btn-outline {
-  background-color: transparent;
+  background-color: #ffffff;
   color: #0066cc;
   border: 1px solid #0066cc;
 }
 
 .btn-outline:hover {
-  background-color: #f0f7ff;
+  background-color: #f0f4f8;
+}
+
+/* リンク・切り替え */
+.forgot-link {
+  width: 100%;
+  text-align: right;
+  margin-bottom: 16px;
+}
+
+.blue-link {
+  color: #0066cc;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.blue-link:hover {
+  text-decoration: underline;
 }
 
 .switch-mode {
-  margin-top: 20px;
-  text-align: center;
+  margin-top: 24px;
   font-size: 0.85rem;
+  text-align: center;
   color: #666666;
 }
 
+.switch-mode a {
+  margin-left: 4px;
+}
+
+/* エラーバナー */
+.error-banner {
+  width: 100%;
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+/* フッター規約リンク */
 .app-footer {
   margin-top: 32px;
   display: flex;
   gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
+  font-size: 0.75rem;
 }
 
-.app-footer .blue-link {
-  font-size: 0.8rem;
-}
-
-/* ログイン後メインレイアウト */
+/* メインアプリケーションのレイアウト */
 .main-layout {
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background-color: #fafafa;
+  background-color: #f0f4f8;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .main-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background-color: #e6f0fa;
-  border-bottom: 1px solid #cce0f5;
+  background: #ffffff;
+  height: 56px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  z-index: 100;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .version-text {
-  font-size: 0.72rem;
-  color: #6688aa;
-  font-weight: 500;
+  font-size: 0.75rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
 }
 
-/* ヘッダータイトルのタップ対応 */
 .main-header-title {
+  font-size: 1rem;
   font-weight: bold;
-  color: #004080;
-  font-size: 0.9rem;
-  letter-spacing: 0.3px;
+  color: #0066cc;
 }
 
 .clickable-title {
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.clickable-title:hover {
-  background-color: rgba(0, 102, 204, 0.1);
 }
 
 .main-header-icons {
   display: flex;
-  gap: 4px;
+  gap: 12px;
 }
 
-/* アイコンボタン（余白・見切れを防止） */
 .icon-btn {
   background: none;
   border: none;
-  color: #0066cc;
-  padding: 8px;
-  border-radius: 50%;
   cursor: pointer;
+  color: #555555;
+  padding: 6px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 }
 
-/* SVGアイコンが枠からはみ出して欠けるのを防ぐ */
-.icon-btn svg {
-  display: block;
-  overflow: visible;
+.icon-btn:hover {
+  background: #f3f4f6;
+  color: #0066cc;
 }
 
-.icon-btn:hover,
 .icon-btn.active {
-  background-color: rgba(0, 102, 204, 0.15);
+  color: #0066cc;
+  background: #e0f2fe;
 }
 
 .main-content {
   flex: 1;
-  margin-top: 60px;
-  margin-bottom: 60px;
+  overflow-y: auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  width: 100%;
+  padding: 20px;
 }
 
 .center-card {
   background: #ffffff;
-  padding: 40px 24px;
+  padding: 32px;
   border-radius: 12px;
-  border: 1px solid #e5e5e5;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  max-width: 400px;
   width: 100%;
-  max-width: 380px;
 }
 
-/* お知らせ一覧・詳細レスポンシブスタイル */
-.notices-container {
-  background: #ffffff;
-  padding: 24px 20px;
-  border-radius: 12px;
-  border: 1px solid #e5e5e5;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  width: 100%;
-  max-width: 500px;
-}
-
-.notice-item {
-  border: 1px solid #e6f0fa;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 12px;
-  background: #ffffff;
-}
-
-.notice-header {
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  background-color: #f8fbfe;
-  transition: background-color 0.2s;
-  user-select: none;
-}
-
-.notice-header:hover {
-  background-color: #e6f0fa;
-}
-
-.notice-tag {
-  background-color: #0066cc;
-  color: #ffffff;
-  font-size: 0.72rem;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-weight: 600;
-}
-
-.notice-title {
-  font-weight: 600;
-  color: #333;
-  flex: 1;
-  font-size: 0.95rem;
-}
-
-.notice-arrow {
-  font-size: 0.8rem;
-  color: #0066cc;
-  font-weight: bold;
-}
-
-.notice-detail-header {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e6f0fa;
-}
-
-.notice-detail-content {
-  padding: 8px 0;
-}
-
-.notice-detail-body {
-  margin-top: 16px;
-  font-size: 0.95rem;
-  color: #444;
-  line-height: 1.6;
-  background-color: #f8fbfe;
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #e6f0fa;
-}
-
-/* 設定画面レイアウト */
-.settings-container {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e5e5e5;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  width: 100%;
-  max-width: 800px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.settings-header {
-  border-bottom: 1px solid #e6f0fa;
-  padding-bottom: 12px;
-}
-
-.settings-body {
-  display: flex;
-  gap: 24px;
-  min-height: 280px;
-}
-
-.settings-sidebar {
-  width: 200px;
-  flex-shrink: 0;
-  border-right: 1px solid #e6f0fa;
-  padding-right: 16px;
-}
-
-.settings-menu {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.settings-menu-item {
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  padding: 10px 12px;
-  border-radius: 6px;
-  color: #333333;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.settings-menu-item:hover,
-.settings-menu-item.active {
-  background-color: #e6f0fa;
-  color: #0066cc;
-  font-weight: 600;
-}
-
-.settings-content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fafafa;
-  border-radius: 8px;
-  border: 1px dashed #cccccc;
-  padding: 24px;
-}
-
-.settings-card {
-  text-align: center;
-}
-
-/* スマホ表示最適化 */
-@media (max-width: 600px) {
-  .main-header-title {
-    font-size: 0.78rem;
-  }
-  .version-text {
-    font-size: 0.68rem;
-  }
-  .settings-container {
-    padding: 16px;
-  }
-  .settings-body {
-    flex-direction: column;
-    gap: 16px;
-  }
-  .settings-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #e6f0fa;
-    padding-right: 0;
-    padding-bottom: 12px;
-  }
-  .settings-menu {
-    flex-direction: row;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 4px;
-  }
-  .settings-menu-item {
-    font-size: 0.85rem;
-    padding: 8px 12px;
-  }
-}
-
-/* 下部インデックスバー */
+/* 下部インデックスバー（タブナビゲーション） */
 .index-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  background: #ffffff;
   height: 60px;
-  background-color: #e6f0fa;
-  border-top: 1px solid #cce0f5;
   display: flex;
+  border-top: 1px solid #e5e7eb;
   justify-content: space-around;
   align-items: center;
-  z-index: 100;
 }
 
 .index-tab {
   background: none;
   border: none;
-  color: #6688aa;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
-  font-size: 0.72rem;
-  font-weight: 500;
+  gap: 4px;
+  color: #888888;
+  font-size: 0.7rem;
   cursor: pointer;
-  padding: 6px 2px;
   flex: 1;
   height: 100%;
-  transition: color 0.2s, background-color 0.2s;
+  justify-content: center;
+  transition: color 0.2s;
 }
 
-.index-tab.active,
-.index-tab:hover {
+.index-tab.active {
   color: #0066cc;
-  background-color: rgba(0, 102, 204, 0.05);
+  font-weight: bold;
+}
+
+/* お知らせ画面のスタイル */
+.notices-container {
+  width: 100%;
+  max-width: 600px;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.notice-item {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notice-item:hover {
+  background: #f8fafc;
+}
+
+.notice-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notice-tag {
+  font-size: 0.75rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.notice-title {
+  flex: 1;
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #333333;
+}
+
+.notice-arrow {
+  color: #888888;
+  font-size: 0.9rem;
+}
+
+.notice-detail-header {
+  margin-bottom: 16px;
+}
+
+.blue-link-btn {
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.blue-link-btn:hover {
+  text-decoration: underline;
+}
+
+.notice-detail-body {
+  font-size: 0.9rem;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* 設定画面のスタイル */
+.settings-container {
+  width: 100%;
+  max-width: 800px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 80vh;
+}
+
+.settings-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.settings-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.settings-sidebar {
+  width: 240px;
+  border-right: 1px solid #e5e7eb;
+  background: #f9fafb;
+  overflow-y: auto;
+}
+
+.settings-menu {
+  list-style: none;
+}
+
+.settings-menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  color: #4b5563;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.settings-menu-item:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.settings-menu-item.active {
+  background: #e0f2fe;
+  color: #0066cc;
+  font-weight: bold;
+}
+
+.settings-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-card {
+  background: #ffffff;
 }
