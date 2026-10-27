@@ -8,6 +8,12 @@ import {
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+  getFirestore, 
+  doc, 
+  getDoc, 
+  setDoc 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // Firebase設定
 const firebaseConfig = {
@@ -22,6 +28,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 // DOM要素の取得
 const authContainer = document.getElementById('auth-container');
@@ -104,6 +111,7 @@ onAuthStateChanged(auth, async (user) => {
     if (user.emailVerified) {
       authContainer.classList.add('hidden');
       mainApp.classList.remove('hidden');
+      await loadUserDataFromCloud();
       showMainView('home');
       resetIdleTimer();
       renderHome();
@@ -218,19 +226,59 @@ const handleLogout = async () => {
 headerLogoutBtn.addEventListener('click', handleLogout);
 
 // ==========================================
+// Firestore クラウドデータ同期管理
+// ==========================================
+let cloudDataCache = {
+  settings: { maxPeriods: 6, showSat: false, showSun: false },
+  courseGroups: [],
+  events: [],
+  overrides: {},
+  timetableGroups: []
+};
+
+async function loadUserDataFromCloud() {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      cloudDataCache.settings = data.settings || { maxPeriods: 6, showSat: false, showSun: false };
+      cloudDataCache.courseGroups = data.courseGroups || [];
+      cloudDataCache.events = data.events || [];
+      cloudDataCache.overrides = data.overrides || {};
+      cloudDataCache.timetableGroups = data.timetableGroups || [];
+    } else {
+      // 初期データがなければ保存
+      await saveUserDataToCloud();
+    }
+  } catch (error) {
+    console.error("クラウドデータ読み込みエラー:", error);
+  }
+}
+
+async function saveUserDataToCloud() {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    const docRef = doc(db, "users", user.uid);
+    await setDoc(docRef, cloudDataCache);
+  } catch (error) {
+    console.error("クラウドデータ保存エラー:", error);
+  }
+}
+
+// ==========================================
 // 設定管理
 // ==========================================
 function getSettings() {
-  const user = auth.currentUser;
-  if (!user) return { maxPeriods: 6, showSat: false, showSun: false };
-  const data = localStorage.getItem(`settings_${user.uid}`);
-  return data ? JSON.parse(data) : { maxPeriods: 6, showSat: false, showSun: false };
+  return cloudDataCache.settings;
 }
 
-function saveSettings(settings) {
-  const user = auth.currentUser;
-  if (!user) return;
-  localStorage.setItem(`settings_${user.uid}`, JSON.stringify(settings));
+async function saveSettings(settings) {
+  cloudDataCache.settings = settings;
+  await saveUserDataToCloud();
 }
 
 function setActiveDays(settings) {
@@ -250,16 +298,12 @@ function setActiveDays(settings) {
 // 履修科目データ管理
 // ==========================================
 function getSavedCourseGroups() {
-  const user = auth.currentUser;
-  if (!user) return [];
-  const data = localStorage.getItem(`course_groups_${user.uid}`);
-  return data ? JSON.parse(data) : [];
+  return cloudDataCache.courseGroups;
 }
 
-function saveCourseGroups(groups) {
-  const user = auth.currentUser;
-  if (!user) return;
-  localStorage.setItem(`course_groups_${user.uid}`, JSON.stringify(groups));
+async function saveCourseGroups(groups) {
+  cloudDataCache.courseGroups = groups;
+  await saveUserDataToCloud();
 }
 
 function getAllSubjects() {
@@ -319,16 +363,12 @@ function getNationalHoliday(year, month, day) {
 }
 
 function getSavedEvents() {
-  const user = auth.currentUser;
-  if (!user) return [];
-  const data = localStorage.getItem(`events_${user.uid}`);
-  return data ? JSON.parse(data) : [];
+  return cloudDataCache.events;
 }
 
-function saveEvents(events) {
-  const user = auth.currentUser;
-  if (!user) return;
-  localStorage.setItem(`events_${user.uid}`, JSON.stringify(events));
+async function saveEvents(events) {
+  cloudDataCache.events = events;
+  await saveUserDataToCloud();
 }
 
 function getEventColorStyles(colorKey) {
@@ -578,12 +618,12 @@ document.addEventListener('click', (e) => {
   }
 });
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
   if (e.target.classList.contains('js-delete-event')) {
     const index = parseInt(e.target.getAttribute('data-index'), 10);
     let events = getSavedEvents();
     events.splice(index, 1);
-    saveEvents(events);
+    await saveEvents(events);
     renderCalendar();
     if (selectedCalendarDateStr) renderCalendarDayDetail(selectedCalendarDateStr);
     renderHome();
@@ -609,7 +649,7 @@ document.addEventListener('click', (e) => {
 });
 
 if (saveEventBtn) {
-  saveEventBtn.addEventListener('click', () => {
+  saveEventBtn.addEventListener('click', async () => {
     const category = document.getElementById('event-category').value;
     const color = document.getElementById('event-color').value;
     const title = document.getElementById('event-title').value.trim();
@@ -688,7 +728,7 @@ if (saveEventBtn) {
       });
     }
 
-    saveEvents(events);
+    await saveEvents(events);
     eventModal.classList.add('hidden');
     renderCalendar();
     if (selectedCalendarDateStr) renderCalendarDayDetail(selectedCalendarDateStr);
@@ -700,16 +740,12 @@ if (saveEventBtn) {
 // 時間割変更機能（独立）
 // ==========================================
 function getSavedOverrides() {
-  const user = auth.currentUser;
-  if (!user) return {};
-  const data = localStorage.getItem(`overrides_${user.uid}`);
-  return data ? JSON.parse(data) : {};
+  return cloudDataCache.overrides;
 }
 
-function saveOverrides(overrides) {
-  const user = auth.currentUser;
-  if (!user) return;
-  localStorage.setItem(`overrides_${user.uid}`, JSON.stringify(overrides));
+async function saveOverrides(overrides) {
+  cloudDataCache.overrides = overrides;
+  await saveUserDataToCloud();
 }
 
 const overrideModal = document.getElementById('override-modal');
@@ -793,7 +829,7 @@ if (closeOverrideModalBtn) {
   });
 }
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
   if (e.target.id === 'edit-override-btn') {
     const dateStr = e.target.getAttribute('data-date');
     openOverrideModalForDate(dateStr);
@@ -802,7 +838,7 @@ document.addEventListener('click', (e) => {
     if (confirm(`${dateStr} の時間割変更設定を削除しますか？`)) {
       let overrides = getSavedOverrides();
       delete overrides[dateStr];
-      saveOverrides(overrides);
+      await saveOverrides(overrides);
       renderCalendar();
       if (selectedCalendarDateStr) renderCalendarDayDetail(selectedCalendarDateStr);
       renderHome();
@@ -811,7 +847,7 @@ document.addEventListener('click', (e) => {
 });
 
 if (saveOverrideBtn) {
-  saveOverrideBtn.addEventListener('click', () => {
+  saveOverrideBtn.addEventListener('click', async () => {
     const dateStr = selectedCalendarDateStr;
     if (!dateStr) {
       overrideErrorMsg.textContent = "対象日が選択されていません。";
@@ -832,7 +868,7 @@ if (saveOverrideBtn) {
 
     let overrides = getSavedOverrides();
     overrides[dateStr] = { weekday, maxPeriod, periods };
-    saveOverrides(overrides);
+    await saveOverrides(overrides);
 
     overrideModal.classList.add('hidden');
     renderCalendar();
@@ -845,16 +881,12 @@ if (saveOverrideBtn) {
 // 時間割グループデータ管理
 // ==========================================
 function getSavedTimetableGroups() {
-  const user = auth.currentUser;
-  if (!user) return [];
-  const data = localStorage.getItem(`timetable_groups_${user.uid}`);
-  return data ? JSON.parse(data) : [];
+  return cloudDataCache.timetableGroups;
 }
 
-function saveTimetableGroups(groups) {
-  const user = auth.currentUser;
-  if (!user) return;
-  localStorage.setItem(`timetable_groups_${user.uid}`, JSON.stringify(groups));
+async function saveTimetableGroups(groups) {
+  cloudDataCache.timetableGroups = groups;
+  await saveUserDataToCloud();
 }
 
 // ==========================================
@@ -1071,19 +1103,19 @@ function renderCourseGroups() {
 }
 
 if (courseGroupsList) {
-  courseGroupsList.addEventListener('click', (e) => {
+  courseGroupsList.addEventListener('click', async (e) => {
     if (e.target.classList.contains('js-delete-group')) {
       const index = parseInt(e.target.getAttribute('data-index'), 10);
       let groups = getSavedCourseGroups();
       groups.splice(index, 1);
-      saveCourseGroups(groups);
+      await saveCourseGroups(groups);
       renderCourseGroups();
     }
   });
 }
 
 if (saveCourseGroupBtn) {
-  saveCourseGroupBtn.addEventListener('click', () => {
+  saveCourseGroupBtn.addEventListener('click', async () => {
     const title = document.getElementById('group-title').value.trim();
     const startDate = document.getElementById('group-start').value;
     const endDate = document.getElementById('group-end').value;
@@ -1106,7 +1138,7 @@ if (saveCourseGroupBtn) {
     const newGroup = { title, startDate, endDate, subjects };
     const groups = getSavedCourseGroups();
     groups.push(newGroup);
-    saveCourseGroups(groups);
+    await saveCourseGroups(groups);
 
     courseModal.classList.add('hidden');
     renderCourseGroups();
@@ -1188,7 +1220,7 @@ function renderTimetableList() {
 }
 
 if (timetableGroupsContainer) {
-  timetableGroupsContainer.addEventListener('click', (e) => {
+  timetableGroupsContainer.addEventListener('click', async (e) => {
     const index = parseInt(e.target.getAttribute('data-index'), 10);
     if (isNaN(index)) return;
 
@@ -1202,7 +1234,7 @@ if (timetableGroupsContainer) {
       if (confirm("この時間割グループを削除してもよろしいですか？")) {
         let groups = getSavedTimetableGroups();
         groups.splice(index, 1);
-        saveTimetableGroups(groups);
+        await saveTimetableGroups(groups);
         renderTimetableList();
       }
     }
@@ -1315,7 +1347,7 @@ if (cancelTimetableBtn) {
 }
 
 if (saveTimetableBtn) {
-  saveTimetableBtn.addEventListener('click', () => {
+  saveTimetableBtn.addEventListener('click', async () => {
     const title = document.getElementById('tt-modal-title').value.trim();
     const startDate = document.getElementById('tt-start-date').value;
     const endDate = document.getElementById('tt-end-date').value;
@@ -1344,7 +1376,7 @@ if (saveTimetableBtn) {
       groups.push(newGroup);
     }
 
-    saveTimetableGroups(groups);
+    await saveTimetableGroups(groups);
     if (timetableModal) timetableModal.classList.add('hidden');
     renderTimetableList();
   });
@@ -1422,7 +1454,7 @@ function loadSettingsPanel(titleText) {
 
     panel.innerHTML = `
       <h3 class="title-blue" style="font-size: 1.4rem; margin-bottom: 8px;">時間割設定</h3>
-      <p class="sub-text" style="margin-bottom: 20px;">1日の最大時限数（1〜10限）や土曜日・日曜日の表示切り替えを行います。</p>
+      <p class="sub-text" style="margin-bottom: 20px;">1日の最大時限数（1〜10限）や土曜日・日曜日の設定を行います。</p>
       
       <div id="settings-success-msg" class="hidden" style="background-color: #e6f0fa; color: #0066cc; border: 1px solid #cce0f5; padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 16px; transition: opacity 0.3s ease;">
         設定しました
@@ -1447,12 +1479,12 @@ function loadSettingsPanel(titleText) {
       <button type="button" id="save-settings-btn" class="btn btn-primary" style="max-width: 200px;">設定を保存</button>
     `;
 
-    document.getElementById('save-settings-btn').addEventListener('click', () => {
+    document.getElementById('save-settings-btn').addEventListener('click', async () => {
       const maxPeriods = parseInt(document.getElementById('set-max-periods').value, 10);
       const showSat = document.getElementById('set-show-sat').checked;
       const showSun = document.getElementById('set-show-sun').checked;
 
-      saveSettings({ maxPeriods, showSat, showSun });
+      await saveSettings({ maxPeriods, showSat, showSun });
 
       const successMsg = document.getElementById('settings-success-msg');
       if (successMsg) {
