@@ -1115,7 +1115,7 @@ if (loginForm) {
       password: document.getElementById('login-password').value,
     });
     if (error) {
-      loginErrorMsg.textContent = "メールアドレスかパスワードが正しくありません。";
+      loginErrorMsg.textContent = "メールアドレスかパスワードが正しくないか、アカウントが無効になっています。";
       loginErrorMsg.classList.remove('hidden');
     }
   });
