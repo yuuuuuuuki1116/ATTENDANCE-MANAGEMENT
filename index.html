@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ATTENDANCE MANAGEMENT</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Supabase SDK の読み込み -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <!-- 認証前のコンテナ（ログイン・アカウント作成・メール認証） -->
@@ -88,7 +90,7 @@
     <div id="verify-card" class="card hidden">
       <h2 class="title-blue">メールアドレス認証</h2>
       <p class="sub-text" style="margin-top: 16px; margin-bottom: 24px; line-height: 1.6;">
-        入力されたメールアドレス宛にメールを送信しました。URLを開いてアカウント登録を完了させてください。
+        入力されたメールアドレス宛に確認メールを送信しました。メール内のリンクを開いて登録を完了させてください。
       </p>
       <button type="button" class="btn btn-primary js-back-to-login">ログイン画面に戻る</button>
     </div>
@@ -156,24 +158,19 @@
     <!-- ホーム画面 -->
     <main id="home-view" class="main-content" style="align-items: stretch; justify-content: flex-start; padding: 24px;">
       <div style="width: 100%; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
-        <!-- 日付とホームタイトル -->
         <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
           <div id="current-date-display" style="font-size: 1.05rem; font-weight: 600; color: #555555; margin-bottom: 4px;"></div>
           <h2 class="title-blue" style="font-size: 1.6rem; margin-bottom: 0;">ホーム</h2>
         </div>
 
-        <!-- 本日の授業科目一覧 -->
         <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <h3 style="font-size: 1.1rem; color: #0066cc; font-weight: bold; margin-bottom: 0;">本日の授業</h3>
             <button type="button" id="open-home-timetable-override-btn" class="btn btn-outline" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-top: 0;">本日の時間割変更</button>
           </div>
-          <div id="home-today-timetable-container" style="display: flex; flex-direction: column; gap: 8px;">
-            <!-- JSで動的生成 -->
-          </div>
+          <div id="home-today-timetable-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
-        <!-- 履修科目登録 -->
         <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
             <h3 style="font-size: 1.1rem; color: #0066cc; font-weight: bold;">履修科目登録</h3>
@@ -253,11 +250,9 @@
               <h2 id="cal-month-title" class="title-blue" style="font-size: 1.3rem; margin-bottom: 0;">2026年 10月</h2>
               <button type="button" id="cal-next-month" class="btn btn-outline" style="width: auto; padding: 6px 12px; font-size: 0.85rem;">翌月 &gt;</button>
             </div>
-            <!-- カレンダー上部（右上）の予定を追加ボタン（複数日選択用） -->
             <button type="button" id="open-add-event-modal" class="btn btn-primary" style="width: auto; padding: 6px 14px; font-size: 0.85rem; margin-top: 0;">+ 予定を追加</button>
           </div>
 
-          <!-- カレンダーグリッド（列幅固定） -->
           <div style="overflow-x: auto;">
             <table style="width: 100%; table-layout: fixed; border-collapse: collapse; text-align: center; font-size: 0.85rem;">
               <thead>
@@ -271,26 +266,20 @@
                   <th style="padding: 10px 4px; border: 1px solid #cce0f5; color: #0066cc; width: 14.28%;">土</th>
                 </tr>
               </thead>
-              <tbody id="calendar-grid-body">
-                <!-- JSで動的生成 -->
-              </tbody>
+              <tbody id="calendar-grid-body"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- カレンダー下部：選択された日付の予定詳細・追加アクションエリア -->
         <div id="calendar-day-detail-card" class="hidden" style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <h3 id="cal-detail-date-title" class="title-blue" style="font-size: 1.1rem; margin-bottom: 0;">日付の詳細</h3>
             <div style="display: flex; gap: 8px;">
-              <!-- カレンダー下部の予定を追加ボタン（当日用） -->
               <button type="button" id="cal-detail-add-event-btn" class="btn btn-primary" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-top: 0;">+ 予定を追加</button>
               <button type="button" id="cal-detail-add-override-btn" class="btn btn-outline" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-top: 0; color: #0066cc;">+ 時間割変更</button>
             </div>
           </div>
-          <div id="cal-detail-events-list" style="display: flex; flex-direction: column; gap: 8px;">
-            <!-- JSで動的生成 -->
-          </div>
+          <div id="cal-detail-events-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
       </div>
     </main>
@@ -301,7 +290,6 @@
         <h3 id="event-modal-heading" class="title-blue" style="font-size: 1.3rem; margin-bottom: 16px;">予定の追加</h3>
         <div id="event-error-msg" class="error-banner hidden" style="margin-bottom: 16px;"></div>
 
-        <!-- 日付設定グループ（右上からの複数日選択用、または詳細からの当日用で切り替わり） -->
         <div id="event-date-group-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
           <div class="form-group" style="margin-bottom: 0;">
             <label for="event-start-date">開始日</label>
@@ -352,7 +340,7 @@
       </div>
     </div>
 
-    <!-- 時間割変更モーダル（独立） -->
+    <!-- 時間割変更モーダル -->
     <div id="override-modal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto;">
       <div style="background: #ffffff; width: 100%; max-width: 480px; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;">
         <h3 id="override-modal-heading" class="title-blue" style="font-size: 1.3rem; margin-bottom: 16px;">時間割変更の登録</h3>
@@ -397,9 +385,7 @@
 
         <div class="form-group">
           <label style="font-size: 0.85rem; margin-bottom: 6px; display: block;">個別時限変更</label>
-          <div id="override-periods-list" style="display: flex; flex-direction: column; gap: 6px;">
-            <!-- JS動的生成 -->
-          </div>
+          <div id="override-periods-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
         </div>
 
         <div style="display: flex; gap: 12px; margin-top: 24px;">
@@ -412,8 +398,6 @@
     <!-- 時間割画面 -->
     <main id="timetable-view" class="main-content hidden" style="align-items: stretch; justify-content: flex-start; padding: 24px;">
       <div style="width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
-        
-        <!-- 時間割一覧・選択ビュー -->
         <div id="timetable-list-card" style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
             <div>
@@ -428,7 +412,6 @@
           </div>
         </div>
 
-        <!-- 時間割グリッド表示ビュー -->
         <div id="timetable-display-card" style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <div>
@@ -448,13 +431,10 @@
                   <th style="padding: 10px; border: 1px solid #cce0f5; width: 40px;">時限</th>
                 </tr>
               </thead>
-              <tbody id="timetable-grid-body">
-                <!-- JSで動的生成 -->
-              </tbody>
+              <tbody id="timetable-grid-body"></tbody>
             </table>
           </div>
         </div>
-
       </div>
     </main>
 
@@ -490,9 +470,7 @@
                 <th style="padding: 10px; border: 1px solid #cce0f5; width: 40px;">時限</th>
               </tr>
             </thead>
-            <tbody id="timetable-edit-grid-body">
-              <!-- JSで生成 -->
-            </tbody>
+            <tbody id="timetable-edit-grid-body"></tbody>
           </table>
         </div>
 
@@ -626,7 +604,6 @@
     </nav>
   </div>
 
-  <!-- 自動日付表示スクリプト -->
   <script>
     function updateCurrentDate() {
       const dateElem = document.getElementById('current-date-display');
@@ -640,10 +617,8 @@
         dateElem.textContent = `${year}年${month}月${day}日 (${weekday})`;
       }
 
-      // お知らせの日付設定（ver1.1.1は昨日、ver1.1.2は今日）
       const nowMs = new Date();
       const yesterdayMs = new Date(nowMs.getTime() - (24 * 60 * 60 * 1000));
-
       const formatDate = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 
       const dateVer112Elem = document.getElementById('notice-date-ver112');
@@ -654,7 +629,6 @@
     updateCurrentDate();
   </script>
 
-  <!-- アプリメインスクリプト -->
   <script type="module" src="app.js"></script>
 </body>
 </html>
